@@ -1,67 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:frontend_rolly/screens/main_home_page.dart';
 import 'package:frontend_rolly/theme/colors.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../config.dart';
 import '../lang/app_language.dart';
 import 'package:provider/provider.dart';
-import 'register_screen.dart';
+import 'main_home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class GetMeasurementsScreen extends StatefulWidget {
+  const GetMeasurementsScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<GetMeasurementsScreen> createState() => _GetMeasurementsState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+class _GetMeasurementsState extends State<GetMeasurementsScreen> {
+  final TextEditingController _heightController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
+  
+  String? _heightError;
+  String? _weightError;
 
   bool _isLoading = false;
 
-  Future<void> _login() async {
+
+  Future<void> _register() async {
+    
     setState(() => _isLoading = true);
 
-    final url = Uri.parse(AppConfig.loginEndpoint); 
+    // Pobierz token z pamięci
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token');
+
+    if (token == null) {
+      setState(() => _isLoading = false);
+      return;
+    }
+
+    final url = Uri.parse(AppConfig.measurementsEndpoint); 
     final response = await http.post(
       url,
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: json.encode({
-        'username': _usernameController.text,
-        'passwd': _passwordController.text,
+        'weight': double.parse(_weightController.text),
+        'height': int.parse(_heightController.text)
       }),
     );
 
     setState(() => _isLoading = false);
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final token = data['token'];
-
-      if (token != null) {
-        // Zapisz token lokalnie
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('jwt_token', token);
-
-        // Przejdź na ekran główny
+        // Przejdź do logowania
         if (mounted) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const MyHomePage(title: AppConfig.appName)),
           );
         }
-      }
     } else {
       // Obsługa błędów
       if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.read<AppLanguage>().t('wrongLoginOrPassword'))),
-      );
     }
   }
 
@@ -76,8 +79,8 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Logo zamiast kółka
               SvgPicture.asset(
                 AppConfig.logoImg,
                 height: 160,
@@ -89,34 +92,29 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.primary, // turkusowy
-                ),
-              ),
-              const SizedBox(height: 48),
-
-              Text(
-                lang.t('login'),
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.text,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                lang.t('loginSubtitle'),
-                style: TextStyle(
-                  color: AppColors.text,
+                  color: AppColors.primary,
                 ),
               ),
               const SizedBox(height: 32),
 
-              // Pole użytkownika
+              Text(
+                lang.t('shareMeasurements'),
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.text,
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Waga (kg)
               TextField(
-                controller: _usernameController,
+                controller: _weightController,
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
-                  hintText: lang.t('username'),
+                  errorText: _weightError,
+                  errorMaxLines: 3,
+                  hintText: lang.t('weight'),
                   hintStyle: TextStyle(
                     color: AppColors.text,
                   ),
@@ -131,13 +129,14 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Pole hasła
+              // Wzrost (cm)
               TextField(
-                controller: _passwordController,
-                obscureText: true,
+                controller: _heightController,
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
-                  hintText: lang.t('password'),
+                  errorText: _heightError,
+                  errorMaxLines: 3,
+                  hintText: lang.t('height'),
                   hintStyle: TextStyle(
                     color: AppColors.text,
                   ),
@@ -152,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Przycisk logowania
+              // Przycisk kontynuacji
               SizedBox(
                 width: double.infinity,
                 child: _isLoading
@@ -165,9 +164,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
-                        onPressed: _login,
+                        onPressed: _register,
                         child: Text(
-                          lang.t('login'),
+                          lang.t('continue'),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -175,24 +174,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-              ),
-              const SizedBox(height: 24),
-
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                  );
-                },
-                child: Text(
-                  lang.t('goToReg'),
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.text,
-                    fontSize: 12,
-                  ),
-                ),
               ),
             ],
           ),

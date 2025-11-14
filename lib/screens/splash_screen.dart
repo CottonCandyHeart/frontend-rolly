@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'login_screen.dart';
 import '../theme/colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../config.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -50,11 +51,10 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SvgPicture.asset(
-              'assets/images/logo.svg',
-              width: 150, 
-              height: 150,
+              AppConfig.logoLightImg,
+              width: 250, 
+              height: 250,
             ),
-            const Icon(Icons.roller_skating, size: 100, color: Colors.white),
             const SizedBox(height: 20),
             Text(
               'Rolly',
