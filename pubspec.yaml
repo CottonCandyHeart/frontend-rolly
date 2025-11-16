@@ -15,7 +15,9 @@ dependencies:
   http: ^1.6.0
   shared_preferences: ^2.5.3
   cupertino_icons: ^1.0.8
-
+  youtube_player_iframe: ^5.2.2
+  google_fonts: ^6.3.2
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:frontend_rolly/config.dart';
 import '../theme/colors.dart';
 import 'home_screen.dart';
 import 'education_screen.dart';
 import 'training_screen.dart';
 import 'meeting_screen.dart';
 import '../widgets/custom_bottom_nav_bar.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -41,25 +44,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                    ),
                     padding: const EdgeInsets.all(2),
-                    width: 20,
-                    height: 20,
+                    width: 30,
+                    height: 30,
                     child: Center(
-                      child: Icon(
-                        Icons.person_2_outlined,
-                        color: AppColors.background,
-                        size: 60,
+                      child: SvgPicture.asset(
+                        AppConfig.logoImg,
+                        height: 30,
                       ),
                     ),
                   ),
                   SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                   Text(
                     widget.title,
-                    style: TextStyle(
+                    style: GoogleFonts.dancingScript(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w900,
                       fontSize: 25,

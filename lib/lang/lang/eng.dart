@@ -16,8 +16,9 @@ const Map<String, String> eng = {
   'goToReg': 'Or Register',
   'goToLogin': 'Or Log In',
 
-  // GO TO NEXT
+  // GO TO NEXT / GO BACK
   'continue': 'Continue',
+  'back': 'Back',
 
   // USER DATA
   'username': 'Username',
@@ -37,4 +38,8 @@ const Map<String, String> eng = {
   'birthdayRequired': 'Choose date of birth',
   'userExists': 'User Already Exists',
   'loginFailed': 'Login Failed',
+  'failedToLoadCategories': 'Failed To Load Categories',
+
+  'noAvailableCategories': 'No Available Categories',
+  'noTricksAvailable' : 'No Available Tricks',
 };

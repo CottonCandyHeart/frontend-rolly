@@ -55,16 +55,6 @@ class _SplashScreenState extends State<SplashScreen> {
               width: 250, 
               height: 250,
             ),
-            const SizedBox(height: 20),
-            Text(
-              'Rolly',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: AppColors.background,
-              ),
-            ),
           ],
         ),
       ),

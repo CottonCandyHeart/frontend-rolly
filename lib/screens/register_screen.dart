@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend_rolly/screens/get_measurements_screen.dart';
 import 'package:frontend_rolly/theme/colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -181,11 +182,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               Text(
                 'Rolly',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
-                ),
+                style: GoogleFonts.dancingScript(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 20,
+                    ),
               ),
               const SizedBox(height: 32),
 

@@ -9,6 +9,8 @@ class AppConfig {
   static const String loginEndpoint = '$apiBaseUrl/auth/login';
   static const String registerEndpoint = '$apiBaseUrl/auth/reg';
   static const String measurementsEndpoint = '$apiBaseUrl/user/meas';
+  static const String getCategoryEndpoint = '$apiBaseUrl/trick/categories';
+  static const String trickByCategoryEndpoint = '$apiBaseUrl/trick/by-cat';
 
   // img
   static const String logoImg = 'assets/images/logo.svg';

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend_rolly/screens/main_home_page.dart';
 import 'package:frontend_rolly/theme/colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -86,11 +87,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
               Text(
                 'Rolly',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary, // turkusowy
-                ),
+                style: GoogleFonts.dancingScript(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 30,
+                    ),
               ),
               const SizedBox(height: 48),
 
