@@ -11,6 +11,7 @@ class AppConfig {
   static const String measurementsEndpoint = '$apiBaseUrl/user/meas';
   static const String getCategoryEndpoint = '$apiBaseUrl/trick/categories';
   static const String trickByCategoryEndpoint = '$apiBaseUrl/trick/by-cat';
+  static const String userResponse = '$apiBaseUrl/user/profile';
 
   // img
   static const String logoImg = 'assets/images/logo.svg';

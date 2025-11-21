@@ -39,6 +39,9 @@ class _EducationState extends State<EducationScreen> {
       },
     );
 
+    print("STATUS: ${response.statusCode}");
+    print("BODY: ${response.body}");
+
     if (response.statusCode == 200) {
       final List data = jsonDecode(response.body);
       return data.map((e) => Category.fromJson(e)).toList();

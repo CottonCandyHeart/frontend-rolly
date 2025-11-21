@@ -22,6 +22,7 @@ class TrickListWidget extends StatelessWidget {
   final Function(TrickList trick) onTrickSelected;
 
   Future<List<TrickList>> fetchTricks(BuildContext context) async {
+    print("I'm here");
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('jwt_token')!;
 
@@ -30,8 +31,11 @@ class TrickListWidget extends StatelessWidget {
       Uri.parse(url),
       headers: {'Authorization': 'Bearer $token'},
     );
+    print("STATUS: ${response.statusCode}");
+    print("BODY: ${response.body}");
 
     final List data = jsonDecode(response.body);
+
     return data.map((e) => TrickList.fromJson(e)).toList();
   }
 

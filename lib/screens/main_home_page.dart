@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend_rolly/config.dart';
+import 'package:frontend_rolly/screens/settings_screen.dart';
 import '../theme/colors.dart';
 import 'home_screen.dart';
 import 'education_screen.dart';
@@ -24,7 +25,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
 
-    final List<Widget> _widgetOptions = <Widget>[
+    final List<Widget> widgetOptions = <Widget>[
       HomeScreen(),
       EducationScreen(),
       TrainingScreen(),
@@ -70,14 +71,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 icon: Icon(Icons.settings, color: AppColors.text),
                 iconSize: 30,
                 onPressed: () {
-                  // TODO: akcja ustawień
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SettingsScreen(
+                        onBack: () {},
+                      )
+                    ),
+                  );
                 },
               ),
             ],
           ),
         ),
       ),
-      body: Center(child: _widgetOptions.elementAt(_currentIndex)),
+      body: Center(child: widgetOptions.elementAt(_currentIndex)),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
         onTap: (index) {
