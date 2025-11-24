@@ -125,7 +125,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => UserProfileScreen(userResponse: user),
+                                      builder: (context) => UserProfileScreen(onBack: (){}, userResponse: user),
                                     ),
                                   );
                                 },

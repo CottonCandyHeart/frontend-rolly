@@ -20,6 +20,7 @@ const Map<String, String> eng = {
   'continue': 'Continue',
   'back': 'Back',
   'send': 'Send',
+  'update': 'Update',
 
   // USER DATA
   'username': 'Username',
@@ -29,12 +30,17 @@ const Map<String, String> eng = {
   'shareMeasurements': 'Share Your Measurements',
   'weight': 'Weight',
   'height': 'Height',
+  'level': 'Level',
 
   // SETTINGS
   'settings': 'Settings',
   'editProfile': 'Edit Profile',
   'showProfile': 'Show Profile',
   'more': 'More',
+  'userProfile': 'User Profile',
+  'changeEmail': 'Change Email',
+  'changePasswd': 'Change Password',
+  'deleteAccount': 'Delete Account',
 
   'notifications': 'Notifications',
   'language': 'Language',
@@ -42,6 +48,14 @@ const Map<String, String> eng = {
   'support': 'Support',
   'legalInformation': 'Legal information',
   'aboutUs': 'About Us',
+
+  'newEmail': 'New Email',
+  'oldEmail': 'Old Email',
+  'emailChanged': 'Email Changed Successfully',
+
+  'newPasswd': 'New Password',
+  'oldPasswd': 'Old Password',
+  'confirmPasswd': 'Confirm Password',
 
   // NOTIFICATION
   'activity': 'Activity',
@@ -57,6 +71,8 @@ const Map<String, String> eng = {
   // UNITS
   'metrical': 'Metrical (kilometers)',
   'imperial': 'Imperial (miles)',
+  'weight_unit': 'kg',
+  'height_unit': 'cm',
 
   // SUPPORT
   'topic': 'Topic',
@@ -105,4 +121,12 @@ const Map<String, String> eng = {
   'emailRequired': 'Email is required',
   'topicRequired': 'Topic is required',
   'messageRequired': 'Message is required',
+
+  'failedChangingPasswd': "Failed Changing Password",
+  'passwordsAreTheSame': 'Old Password And New Password Shouldn\' Be The Same',
+
+  // ENDPOINTS REQUEST
+  'Wrong password!': 'Wrong Password!',
+  'User updated': 'User Updated',
+  'Password updated': 'Password Changed',
 };

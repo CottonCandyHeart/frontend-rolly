@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend_rolly/lang/app_language.dart';
 import 'package:frontend_rolly/theme/colors.dart';
 import 'package:frontend_rolly/widgets/about_us_widget.dart';
+import 'package:frontend_rolly/widgets/change_email_widget.dart';
+import 'package:frontend_rolly/widgets/change_passwd.dart';
 import 'package:frontend_rolly/widgets/language_widget.dart';
 import 'package:frontend_rolly/widgets/legal_information_widget.dart';
 import 'package:frontend_rolly/widgets/notification_widget.dart';
@@ -39,6 +41,8 @@ class _ChosenSettingsState extends State<ChosenSettingsScreen> {
       SupportWidget(),
       LegalInformationWidget(),
       AboutUsWidget(),
+      ChangePasswdWidget(onBack: widget.onBack,),
+      ChangeEmailWidget(onBack: widget.onBack,),
     ];
 
     int getIndex() {

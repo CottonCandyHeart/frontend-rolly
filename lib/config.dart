@@ -2,16 +2,17 @@ class AppConfig {
   // App
   static const String appName = 'Rolly';
 
-  // adres API
+  // API
   static const String apiBaseUrl = 'http://localhost:8080';
 
-  // endpointy
+  // endpoints
   static const String loginEndpoint = '$apiBaseUrl/auth/login';
   static const String registerEndpoint = '$apiBaseUrl/auth/reg';
   static const String measurementsEndpoint = '$apiBaseUrl/user/meas';
   static const String getCategoryEndpoint = '$apiBaseUrl/trick/categories';
   static const String trickByCategoryEndpoint = '$apiBaseUrl/trick/by-cat';
   static const String userResponse = '$apiBaseUrl/user/profile';
+  static const String changePasswd = '$apiBaseUrl/user/change-password';
 
   // img
   static const String logoImg = 'assets/images/logo.svg';
