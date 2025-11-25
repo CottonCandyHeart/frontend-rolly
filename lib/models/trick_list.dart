@@ -4,7 +4,7 @@ class TrickList {
   final String link;
   final String leg;
   final String description;
-  final bool isMastered;
+  bool isMastered;
 
   TrickList({
     required this.categoryName, 

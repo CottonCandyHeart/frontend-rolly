@@ -13,6 +13,7 @@ class AppConfig {
   static const String trickByCategoryEndpoint = '$apiBaseUrl/trick/by-cat';
   static const String userResponse = '$apiBaseUrl/user/profile';
   static const String changePasswd = '$apiBaseUrl/user/change-password';
+  static const String trickEndpoint = '$apiBaseUrl/trick';
 
   // img
   static const String logoImg = 'assets/images/logo.svg';

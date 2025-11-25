@@ -39,9 +39,6 @@ class _EducationState extends State<EducationScreen> {
       },
     );
 
-    print("STATUS: ${response.statusCode}");
-    print("BODY: ${response.body}");
-
     if (response.statusCode == 200) {
       final List data = jsonDecode(response.body);
       return data.map((e) => Category.fromJson(e)).toList();
@@ -74,6 +71,11 @@ class _EducationState extends State<EducationScreen> {
     return TrickWidget(
       trick: selectedTrick!,
       onBack: () => setState(() => selectedTrick = null),
+      onTrickUpdated: (updatedTrick) {
+        setState(() {
+          selectedTrick = updatedTrick;
+        });
+      },
     );
   }
   
@@ -103,7 +105,6 @@ class _EducationState extends State<EducationScreen> {
 
         final categories = snapshot.data!;
 
-        // ---- TODO oznaczenie isMastered ----
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

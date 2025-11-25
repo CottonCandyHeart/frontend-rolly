@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_rolly/config.dart';
 import 'package:frontend_rolly/lang/app_language.dart';
 import 'package:frontend_rolly/models/trick_list.dart';
 import 'package:frontend_rolly/theme/colors.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class TrickWidget extends StatefulWidget {
   final TrickList trick;
   final VoidCallback onBack;
+  final Function(TrickList trick) onTrickUpdated; 
 
   const TrickWidget({
     super.key,
     required this.trick,
     required this.onBack,
+    required this.onTrickUpdated,   
   });
 
   @override
@@ -36,6 +41,51 @@ class _TrickWidgetState extends State<TrickWidget> {
         showFullscreenButton: true,
       ),
     );
+  }
+
+  Future<void> _setMastered() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token');
+
+    if (token == null) {
+      throw Exception("Missing token");
+    }
+
+    final url;
+
+    if (!widget.trick.isMastered){
+      url = Uri.parse('${AppConfig.trickEndpoint}/${Uri.encodeComponent(widget.trick.trickName)}'); 
+    } else {
+      url = Uri.parse('${AppConfig.trickEndpoint}/remove/${Uri.encodeComponent(widget.trick.trickName)}'); 
+    }
+
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+    
+
+    if (response.statusCode == 200) {
+      final message = response.body;
+      widget.trick.isMastered = !widget.trick.isMastered;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.read<AppLanguage>().t(message))),
+      );
+
+      widget.onTrickUpdated(widget.trick);
+    } else {
+      // Obsługa błędów
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.read<AppLanguage>().t('actionFailed'))),
+      );
+    }
   }
 
   @override
@@ -73,6 +123,64 @@ class _TrickWidgetState extends State<TrickWidget> {
           YoutubePlayer(
             controller: _controller,
           ),
+          const SizedBox(height: 12),
+
+          if (widget.trick.isMastered)
+            Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.accent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            onPressed: _setMastered,
+                            child: Text(
+                              lang.t('mastered'),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ),
+                  ),
+                ),
+            ),
+          if (!widget.trick.isMastered)
+            Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            onPressed: _setMastered,
+                            child: Text(
+                              lang.t('notMastered'),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: AppColors.background,
+                              ),
+                            ),
+                          ),
+                  ),
+                ),
+            ),
 
           const SizedBox(height: 20),
 

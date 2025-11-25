@@ -21,6 +21,8 @@ const Map<String, String> eng = {
   'back': 'Back',
   'send': 'Send',
   'update': 'Update',
+  'mastered': 'Mastered',
+  'notMastered': 'Master',
 
   // USER DATA
   'username': 'Username',
@@ -125,8 +127,12 @@ const Map<String, String> eng = {
   'failedChangingPasswd': "Failed Changing Password",
   'passwordsAreTheSame': 'Old Password And New Password Shouldn\' Be The Same',
 
+  'actionFailed': 'Action Failed',
+
   // ENDPOINTS REQUEST
   'Wrong password!': 'Wrong Password!',
   'User updated': 'User Updated',
   'Password updated': 'Password Changed',
+  'Trick set as mastered': 'Trick Set As Mastered',
+  'Trick set as not mastered': 'Removed Trick From Mastered Tricks',
 };
