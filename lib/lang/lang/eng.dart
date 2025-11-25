@@ -105,6 +105,9 @@ const Map<String, String> eng = {
   // LOADING
   'loading': 'Loading...',
 
+  // TRICK
+  'resetProgress': 'Reset Your Progress',
+
   // ERROR
   'wrongLoginOrPassword': 'Incorrect login or password',
   'differentPasswd': 'Password does not match',
@@ -135,4 +138,5 @@ const Map<String, String> eng = {
   'Password updated': 'Password Changed',
   'Trick set as mastered': 'Trick Set As Mastered',
   'Trick set as not mastered': 'Removed Trick From Mastered Tricks',
+  'Reset Progress': 'Your Progress Has Been Removed',
 };

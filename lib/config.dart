@@ -14,6 +14,7 @@ class AppConfig {
   static const String userResponse = '$apiBaseUrl/user/profile';
   static const String changePasswd = '$apiBaseUrl/user/change-password';
   static const String trickEndpoint = '$apiBaseUrl/trick';
+  static const String resetTrickEndpoint = '$apiBaseUrl/trick/reset';
 
   // img
   static const String logoImg = 'assets/images/logo.svg';
