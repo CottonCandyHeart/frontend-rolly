@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 16),
 
               Text(
-                'Rolly',
+                AppConfig.appName,
                 style: GoogleFonts.dancingScript(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w900,

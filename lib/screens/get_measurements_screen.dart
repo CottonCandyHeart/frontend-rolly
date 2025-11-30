@@ -88,7 +88,7 @@ class _GetMeasurementsState extends State<GetMeasurementsScreen> {
               const SizedBox(height: 16),
 
               Text(
-                'Rolly',
+                lang.t('appName'),
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

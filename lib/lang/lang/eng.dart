@@ -1,6 +1,7 @@
 // eng.dart
 const Map<String, String> eng = {
   'welcome': 'Welcome',
+  'appName': 'Rolly',
 
   // LOGIN & REGISTER
   'logout': 'Log out',
@@ -108,6 +109,43 @@ const Map<String, String> eng = {
   // TRICK
   'resetProgress': 'Reset Your Progress',
 
+  // CALENDAR
+  'jan': 'January',
+  'feb': 'February', 
+  'mar': 'March',
+  'apr': 'April',
+  'may': 'May',
+  'jun': 'June',
+  'jul': 'July',
+  'aug': 'August', 
+  'sep': 'September',
+  'oct': 'October',
+  'nov': 'November',
+  'dec': 'December',
+
+  // TRAINING PLAN
+  'addTraining': 'Add Training',
+  'trackTraining': 'Track Training',
+  'chooseDate': 'Choose Date',
+  'planTraining': 'Plan Training',
+
+  'trainingDate': 'Date',
+  'trainingTime': 'Time',
+  'duration': 'Duration',
+  'distance': 'Distance',
+  'activityType': 'Activity Type',
+
+  'chooseActivity': "Choose Activity",
+
+  'minutes': 'Minutes',
+  'hours': 'Hours',
+
+  'opt1': 'Recreation',
+  'opt2': 'Training',
+  'opt3': 'Slalom',
+  'opt4': 'Freeskating',
+
+
   // ERROR
   'wrongLoginOrPassword': 'Incorrect login or password',
   'differentPasswd': 'Password does not match',
@@ -131,6 +169,9 @@ const Map<String, String> eng = {
   'passwordsAreTheSame': 'Old Password And New Password Shouldn\' Be The Same',
 
   'actionFailed': 'Action Failed',
+  'noTrainingsAvailable': 'No Trainings Available',
+
+  'distanceNotANumber': 'Distance Must Be A Number',
 
   // ENDPOINTS REQUEST
   'Wrong password!': 'Wrong Password!',
@@ -139,4 +180,5 @@ const Map<String, String> eng = {
   'Trick set as mastered': 'Trick Set As Mastered',
   'Trick set as not mastered': 'Removed Trick From Mastered Tricks',
   'Reset Progress': 'Your Progress Has Been Removed',
+  'Route created': 'Route Created',
 };
