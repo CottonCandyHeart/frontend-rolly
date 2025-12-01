@@ -6,6 +6,7 @@ import 'package:frontend_rolly/screens/add_training.dart';
 import 'package:frontend_rolly/screens/plan_training.dart';
 import 'package:frontend_rolly/screens/track_training.dart';
 import 'package:frontend_rolly/theme/colors.dart';
+import 'package:frontend_rolly/widgets/show_route.dart';
 import 'package:provider/provider.dart';
 
 class CustomCalendar extends StatefulWidget {
@@ -151,373 +152,392 @@ class _CustomCalendarState extends State<CustomCalendar>{
       return (day == today.day && chosen.month == today.month && chosen.year == today.year);
     }
 
-    return Column(
-      children: [
-        Container(
-          margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-          padding: const EdgeInsets.fromLTRB(8, 8, 8, 28),
-          decoration: BoxDecoration(
-            color: AppColors.primary,
-          ),
-          child: Column(
-            children: [
-              Row(
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 32),
+        child: Column(
+          children: [
+            Container(
+              margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 28),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+              ),
+              child: Column(
                 children: [
+                  Row(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: EdgeInsetsGeometry.fromLTRB(10, 0, 0, 0),
+                          child: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                selectedDay = null;
+                                selectedDayTrainings = [];
+                                selectedRoutes = [];
+                              });
+                              widget.onPrev();
+                            },
+                            icon: const Icon(Icons.arrow_back),
+                            color: AppColors.background,
+                            iconSize: 30,
+                          ),
+                        ),
+                      ),
+                      Spacer(),
+
+                      Text(
+                        "${lang.t(months[chosen.month-1])} ${chosen.year}",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Spacer(),
+
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: EdgeInsetsGeometry.fromLTRB(0, 0, 10, 0),
+                          child: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                selectedDay = null;
+                                selectedDayTrainings = [];
+                                selectedRoutes = [];
+                              });
+                              widget.onNext();
+                            },
+                            icon: const Icon(Icons.arrow_forward),
+                            color: AppColors.background,
+                            iconSize: 30,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 7,
+                        childAspectRatio: 1,
+                      ),
+                      itemCount: daysInMonth,
+                      itemBuilder: (context, index) {
+                        final day = index + 1;
+                        final isHighlighted = highlightedDays.contains(day);
+
+                        return GestureDetector(
+                          onTap: ()=>{
+                            setState(() {
+                              selectedDay = day;
+                              selectedDayTrainings = trainingsForDay(day);
+                              selectedRoutes = routesForDay(day);
+                            })
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: isToday(day) ? AppColors.secondary : (isHighlighted ? AppColors.accent : AppColors.current),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "$day",
+                                style: TextStyle(
+                                  color: isToday(day) ? AppColors.current : (isHighlighted ? AppColors.text : AppColors.background),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          )
+                        );
+                      },
+                    ),
+                  ),
+                ]
+              )
+            ),
+            Column(children: [
+                const SizedBox(height: 16),
+                if (selectedDay == null) ...[
+                  Center(
+                    child: Text(
+                      lang.t('chooseDate'),
+                      style: TextStyle(
+                        color: AppColors.text,
+                        fontWeight: FontWeight.bold
+                      )
+                    ),
+                  )
+                ],
+                if (selectedDay != null) ...[
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: EdgeInsetsGeometry.fromLTRB(10, 0, 0, 0),
-                      child: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            selectedDay = null;
-                            selectedDayTrainings = [];
-                            selectedRoutes = [];
-                          });
-                          widget.onPrev();
-                        },
-                        icon: const Icon(Icons.arrow_back),
-                        color: AppColors.background,
-                        iconSize: 30,
+                      padding: EdgeInsetsGeometry.fromLTRB(20, 0, 0, 0),
+                      child: Text(
+                        "$selectedDay.${chosen.month}.${chosen.year}",
+                        style: const TextStyle(color: AppColors.text, fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                    ),
+                    )
                   ),
-                  Spacer(),
+                  const SizedBox(height: 8),
 
-                  Text(
-                    "${lang.t(months[chosen.month-1])} ${chosen.year}",
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  Spacer(),
+                  
 
+                if ((DateTime(chosen.year, chosen.month, selectedDay!)).isBefore(today)) ...[
                   Align(
-                    alignment: Alignment.centerRight,
+                    alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: EdgeInsetsGeometry.fromLTRB(0, 0, 10, 0),
-                      child: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            selectedDay = null;
-                            selectedDayTrainings = [];
-                            selectedRoutes = [];
-                          });
-                          widget.onNext();
-                        },
-                        icon: const Icon(Icons.arrow_forward),
-                        color: AppColors.background,
-                        iconSize: 30,
+                      padding: EdgeInsetsGeometry.fromLTRB(25, 0, 0, 0),
+                      child: Text(
+                        lang.t('doneTrainings'),
+                        style: TextStyle(
+                          color: AppColors.text,
+                          fontWeight: FontWeight.w900,
+                        ),
                       ),
+                    )
+                  ),
+                  
+                  const SizedBox(height: 8),
+                    
+                  ...selectedRoutes.map((t) => GestureDetector(
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ShowRoute(onBack: (){}, route: t),
+                        ),
+                      );
+                    },
+                    child: Container(
+                    width: MediaQuery.of(context).size.width * 0.75,
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.current,
                     ),
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 8),
-              SizedBox(
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 7,
-                    childAspectRatio: 1,
-                  ),
-                  itemCount: daysInMonth,
-                  itemBuilder: (context, index) {
-                    final day = index + 1;
-                    final isHighlighted = highlightedDays.contains(day);
-
-                    return GestureDetector(
-                      onTap: ()=>{
-                        setState(() {
-                          selectedDay = day;
-                          selectedDayTrainings = trainingsForDay(day);
-                          selectedRoutes = routesForDay(day);
-                        })
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: isToday(day) ? AppColors.secondary : (isHighlighted ? AppColors.accent : AppColors.current),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "$day",
-                            style: TextStyle(
-                              color: isToday(day) ? AppColors.current : (isHighlighted ? AppColors.text : AppColors.background),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      )
-                    );
-                  },
-                ),
-              ),
-            ]
-          )
-        ),
-        Column(children: [
-            const SizedBox(height: 16),
-            if (selectedDay == null) ...[
-              Center(
-                child: Text(
-                  lang.t('chooseDate'),
-                  style: TextStyle(
-                    color: AppColors.text,
-                    fontWeight: FontWeight.bold
+                    child: Text(
+                      t.name,
+                      style: const TextStyle(color: AppColors.background),
+                    ),
                   )
-                ),
-              )
-            ],
-            if (selectedDay != null) ...[
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: EdgeInsetsGeometry.fromLTRB(20, 0, 0, 0),
-                  child: Text(
-                    "$selectedDay.${chosen.month}.${chosen.year}",
-                    style: const TextStyle(color: AppColors.text, fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                )
-              ),
-              const SizedBox(height: 8),
-
-              
-
-            if ((DateTime(chosen.year, chosen.month, selectedDay!)).isBefore(today)) ...[
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: EdgeInsetsGeometry.fromLTRB(25, 0, 0, 0),
-                  child: Text(
-                    lang.t('doneTrainings'),
-                    style: TextStyle(
-                      color: AppColors.text,
-                      fontWeight: FontWeight.w900,
-                    ),
                   ),
-                )
-              ),
-              
-              const SizedBox(height: 8),
-              ...selectedRoutes.map((t) => Container(
-                width: MediaQuery.of(context).size.width * 0.75,
-                margin: const EdgeInsets.only(bottom: 8),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.current,
-                ),
-                child: Text(
-                  t.name,
-                  style: const TextStyle(color: AppColors.background),
-                ),
-              )),
-              Center(
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.75,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TrackTraining(onBack: (){},),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(color: AppColors.accent),
-                          padding: const EdgeInsets.all(8),
-                          margin: const EdgeInsets.only(top: 10, right: 5),
-                          child: Text(
-                              lang.t('trackTraining'),
-                              style: TextStyle(color: AppColors.text, fontSize: 12),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 32,
-                      height: 32,
-                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                        decoration: BoxDecoration(color: AppColors.primary),
-                        child: Center(
-                          child: FittedBox(
-                            fit: BoxFit.fill,
-                            child: IconButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => TrackTraining(onBack: (){},),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(Icons.add),
-                              color: AppColors.background,
-                              iconSize: 30,
-                            ),
-                          ),
-                        ),
-                    ),
-                  ],
-                ),
-              ),
-          ),
-          Center(
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.75,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () async {
-                          final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AddTraining(
-                                onBack: (){}, 
-                                dayIso: '${chosen.year}-${chosen.month}-$selectedDay',
+
+                  Center(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.75,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => TrackTraining(onBack: (){},),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(color: AppColors.accent),
+                              padding: const EdgeInsets.all(8),
+                              margin: const EdgeInsets.only(top: 10, right: 5),
+                              child: Text(
+                                  lang.t('trackTraining'),
+                                  style: TextStyle(color: AppColors.text, fontSize: 12),
                               ),
                             ),
-                          );
-
-                          if (result == true) {
-                            await widget.onRefresh?.call();
-                          }
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(color: AppColors.accent),
-                          padding: const EdgeInsets.all(8),
-                          margin: const EdgeInsets.only(top: 10, right: 5),
-                          child: Text(
-                              lang.t('addTraining'),
-                              style: TextStyle(color: AppColors.text, fontSize: 12),
                           ),
                         ),
-                      ),
-                    ),
-                    Container(
-                      width: 32,
-                      height: 32,
-                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                        decoration: BoxDecoration(color: AppColors.primary),
-                        child: Center(
-                          child: FittedBox(
-                            fit: BoxFit.fill,
-                            child: IconButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () async {
-                                final result = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddTraining(
-                                      onBack: (){}, 
-                                      dayIso: '${chosen.year}-${chosen.month}-$selectedDay',
-                                    ),
-                                  ),
-                                );
-
-                                // dopiero TERAZ odświeżaj
-                                if (result == true) {
-                                  await widget.onRefresh?.call();
-                                }
-                              },
-                              icon: const Icon(Icons.add),
-                              color: AppColors.background,
-                              iconSize: 30,
+                        Container(
+                          width: 32,
+                          height: 32,
+                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                            decoration: BoxDecoration(color: AppColors.primary),
+                            child: Center(
+                              child: FittedBox(
+                                fit: BoxFit.fill,
+                                child: IconButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => TrackTraining(onBack: (){},),
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.add),
+                                  color: AppColors.background,
+                                  iconSize: 30,
+                                ),
+                              ),
                             ),
-                          ),
                         ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
               ),
-          )],
-          if ((DateTime(chosen.year, chosen.month, selectedDay!)).isAfter(today)) ...[
-            Text(
-              lang.t('futureTrainings'),
-            ),
-            ...selectedDayTrainings.map((t) => Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.current,
-                ),
-                child: Text(
-                  "${t.targetDuration} min — ${t.notes}",
-                  style: const TextStyle(color: AppColors.background),
-                ),
-              )),
-
-            Center(
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.75,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PlanTraining(onBack: (){},),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(color: AppColors.accent),
-                          padding: const EdgeInsets.all(8),
-                          margin: const EdgeInsets.only(top: 10, right: 5),
-                          child: Text(
-                              lang.t('planTraining'),
-                              style: TextStyle(color: AppColors.text, fontSize: 12),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 32,
-                      height: 32,
-                      margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                        decoration: BoxDecoration(color: AppColors.primary),
-                        child: Center(
-                          child: FittedBox(
-                            fit: BoxFit.fill,
-                            child: IconButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PlanTraining(onBack: (){},),
+              Center(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.75,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddTraining(
+                                    onBack: (){}, 
+                                    dayIso: '${chosen.year}-${chosen.month}-$selectedDay',
                                   ),
-                                );
-                              },
-                              icon: const Icon(Icons.add),
-                              color: AppColors.background,
-                              iconSize: 30,
+                                ),
+                              );
+
+                              if (result == true) {
+                                await widget.onRefresh?.call();
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(color: AppColors.accent),
+                              padding: const EdgeInsets.all(8),
+                              margin: const EdgeInsets.only(top: 10, right: 5),
+                              child: Text(
+                                  lang.t('addTraining'),
+                                  style: TextStyle(color: AppColors.text, fontSize: 12),
+                              ),
                             ),
                           ),
                         ),
+                        Container(
+                          width: 32,
+                          height: 32,
+                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                            decoration: BoxDecoration(color: AppColors.primary),
+                            child: Center(
+                              child: FittedBox(
+                                fit: BoxFit.fill,
+                                child: IconButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () async {
+                                    final result = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AddTraining(
+                                          onBack: (){}, 
+                                          dayIso: '${chosen.year}-${chosen.month}-$selectedDay',
+                                        ),
+                                      ),
+                                    );
+
+                                    // dopiero TERAZ odświeżaj
+                                    if (result == true) {
+                                      await widget.onRefresh?.call();
+                                    }
+                                  },
+                                  icon: const Icon(Icons.add),
+                                  color: AppColors.background,
+                                  iconSize: 30,
+                                ),
+                              ),
+                            ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
+              )],
+              if ((DateTime(chosen.year, chosen.month, selectedDay!)).isAfter(today)) ...[
+                Text(
+                  lang.t('futureTrainings'),
                 ),
+                ...selectedDayTrainings.map((t) => Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.current,
+                    ),
+                    child: Text(
+                      "${t.targetDuration} min — ${t.notes}",
+                      style: const TextStyle(color: AppColors.background),
+                    ),
+                  )),
+
+                Center(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.75,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PlanTraining(onBack: (){},),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(color: AppColors.accent),
+                              padding: const EdgeInsets.all(8),
+                              margin: const EdgeInsets.only(top: 10, right: 5),
+                              child: Text(
+                                  lang.t('planTraining'),
+                                  style: TextStyle(color: AppColors.text, fontSize: 12),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: 32,
+                          height: 32,
+                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                            decoration: BoxDecoration(color: AppColors.primary),
+                            child: Center(
+                              child: FittedBox(
+                                fit: BoxFit.fill,
+                                child: IconButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => PlanTraining(onBack: (){},),
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.add),
+                                  color: AppColors.background,
+                                  iconSize: 30,
+                                ),
+                              ),
+                            ),
+                        ),
+                      ],
+                    ),
+                  ),
               ),
+              ]
+            ]
+            ]
           ),
           ]
-        ]
-        ]
-      ),
-      ]
+        )
+      )
     );
+    
   }
 }
