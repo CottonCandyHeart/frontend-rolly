@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_rolly/lang/app_language.dart';
+import 'package:frontend_rolly/models/route.dart';
 import 'package:frontend_rolly/models/training_plan.dart';
 import 'package:frontend_rolly/screens/add_training.dart';
 import 'package:frontend_rolly/screens/plan_training.dart';
@@ -8,17 +9,21 @@ import 'package:frontend_rolly/theme/colors.dart';
 import 'package:provider/provider.dart';
 
 class CustomCalendar extends StatefulWidget {
-  final Future<List<TrainingPlan>> trainings;
+  final Future<List<TrainingPlan>> Function() trainings;
+  final Future<List<TrainingRoute>> Function() routes;
   final DateTime chosen;
   final VoidCallback onPrev;
   final VoidCallback onNext;
+  final Future<void> Function()? onRefresh;
 
   const CustomCalendar({
     super.key,
     required this.trainings,
+    required this.routes,
     required this.chosen,
     required this.onPrev,
     required this.onNext,
+    required this.onRefresh,
   });
 
   @override
@@ -30,15 +35,27 @@ class _CustomCalendarState extends State<CustomCalendar>{
 
   int? selectedDay;
   List<TrainingPlan> selectedDayTrainings = [];
+  List<TrainingRoute> selectedRoutes = [];
+
   List<TrainingPlan> allTrainings = [];
+  List<TrainingRoute> allRoutes = [];
 
   @override
   void initState() {
     super.initState();
-    widget.trainings.then((plans) {
+    widget.trainings().then((plans) {
+      print("Plans fetched: ${plans.length}");
       setState(() {
         allTrainings = plans;
         highlightedDays = extractTrainingDays(plans);
+      });
+    });
+    widget.routes().then((routes) {
+      print("Routes fetched: ${routes.length}");
+      setState(() {
+        allRoutes = routes;
+        final routeDays = extractRouteDays(routes);
+        highlightedDays = {...highlightedDays, ...routeDays}.toList();
       });
     });
   }
@@ -51,10 +68,26 @@ class _CustomCalendarState extends State<CustomCalendar>{
     ).toList();
   }
 
+  List<TrainingRoute> routesForDay(int day) {
+    return allRoutes.where((r) =>
+      r.date.year == widget.chosen.year &&
+      r.date.month == widget.chosen.month &&
+      r.date.day == day
+    ).toList();
+  }
+
 
   List<int> extractTrainingDays(List<TrainingPlan> plans) {
     return plans
         .map((t) => t.dateTime.day)
+        .toSet()
+        .toList()
+      ..sort();
+  }
+
+  List<int> extractRouteDays(List<TrainingRoute> routes) {
+    return routes
+        .map((r) => r.date.day)
         .toSet()
         .toList()
       ..sort();
@@ -72,6 +105,39 @@ class _CustomCalendarState extends State<CustomCalendar>{
       'jan', 'feb', 'mar', 'apr', 'may', 'jun',
       'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
   ]);
+
+  @override
+  void didUpdateWidget(covariant CustomCalendar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.chosen.month != widget.chosen.month ||
+        oldWidget.chosen.year != widget.chosen.year) {
+      
+      _loadMonth();
+    }
+    _loadMonth();
+  }
+
+  Future<void> _loadMonth() async {
+    setState(() {
+      highlightedDays = [];
+      selectedDay = null;
+      selectedDayTrainings = [];
+      selectedRoutes = [];
+    });
+
+    final plans = await widget.trainings();
+    final routes = await widget.routes();
+
+    final planDays = extractTrainingDays(plans);
+    final routeDays = extractRouteDays(routes);
+
+    setState(() {
+      allTrainings = plans;
+      allRoutes = routes;
+      highlightedDays = {...planDays, ...routeDays}.toList()..sort();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,6 +172,7 @@ class _CustomCalendarState extends State<CustomCalendar>{
                           setState(() {
                             selectedDay = null;
                             selectedDayTrainings = [];
+                            selectedRoutes = [];
                           });
                           widget.onPrev();
                         },
@@ -136,6 +203,7 @@ class _CustomCalendarState extends State<CustomCalendar>{
                           setState(() {
                             selectedDay = null;
                             selectedDayTrainings = [];
+                            selectedRoutes = [];
                           });
                           widget.onNext();
                         },
@@ -166,6 +234,8 @@ class _CustomCalendarState extends State<CustomCalendar>{
                       onTap: ()=>{
                         setState(() {
                           selectedDay = day;
+                          selectedDayTrainings = trainingsForDay(day);
+                          selectedRoutes = routesForDay(day);
                         })
                       },
                       child: Container(
@@ -217,20 +287,36 @@ class _CustomCalendarState extends State<CustomCalendar>{
               ),
               const SizedBox(height: 8),
 
-              ...selectedDayTrainings.map((t) => Container(
+              
+
+            if ((DateTime(chosen.year, chosen.month, selectedDay!)).isBefore(today)) ...[
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsetsGeometry.fromLTRB(25, 0, 0, 0),
+                  child: Text(
+                    lang.t('doneTrainings'),
+                    style: TextStyle(
+                      color: AppColors.text,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                )
+              ),
+              
+              const SizedBox(height: 8),
+              ...selectedRoutes.map((t) => Container(
+                width: MediaQuery.of(context).size.width * 0.75,
                 margin: const EdgeInsets.only(bottom: 8),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: AppColors.current,
-                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  "${t.targetDuration} min — ${t.notes}",
-                  style: const TextStyle(color: AppColors.text),
+                  t.name,
+                  style: const TextStyle(color: AppColors.background),
                 ),
               )),
-
-            if ((DateTime(chosen.year, chosen.month, selectedDay!)).isBefore(today)) ...[
               Center(
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.75,
@@ -293,13 +379,20 @@ class _CustomCalendarState extends State<CustomCalendar>{
                   children: [
                     Expanded(
                       child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
+                        onTap: () async {
+                          final result = await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => AddTraining(onBack: (){}, dayIso: '${chosen.year}-${chosen.month}-$selectedDay'),
+                              builder: (context) => AddTraining(
+                                onBack: (){}, 
+                                dayIso: '${chosen.year}-${chosen.month}-$selectedDay',
+                              ),
                             ),
                           );
+
+                          if (result == true) {
+                            await widget.onRefresh?.call();
+                          }
                         },
                         child: Container(
                           decoration: BoxDecoration(color: AppColors.accent),
@@ -333,8 +426,9 @@ class _CustomCalendarState extends State<CustomCalendar>{
                                   ),
                                 );
 
+                                // dopiero TERAZ odświeżaj
                                 if (result == true) {
-                                  setState(() {});
+                                  await widget.onRefresh?.call();
                                 }
                               },
                               icon: const Icon(Icons.add),
@@ -349,6 +443,21 @@ class _CustomCalendarState extends State<CustomCalendar>{
               ),
           )],
           if ((DateTime(chosen.year, chosen.month, selectedDay!)).isAfter(today)) ...[
+            Text(
+              lang.t('futureTrainings'),
+            ),
+            ...selectedDayTrainings.map((t) => Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.current,
+                ),
+                child: Text(
+                  "${t.targetDuration} min — ${t.notes}",
+                  style: const TextStyle(color: AppColors.background),
+                ),
+              )),
+
             Center(
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.75,

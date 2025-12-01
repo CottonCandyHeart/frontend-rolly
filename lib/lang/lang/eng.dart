@@ -128,6 +128,8 @@ const Map<String, String> eng = {
   'trackTraining': 'Track Training',
   'chooseDate': 'Choose Date',
   'planTraining': 'Plan Training',
+  'doneTrainings': ' Trainings done',
+  'futureTrainings': 'Incoming trainings',
 
   'trainingDate': 'Date',
   'trainingTime': 'Time',
@@ -170,6 +172,7 @@ const Map<String, String> eng = {
 
   'actionFailed': 'Action Failed',
   'noTrainingsAvailable': 'No Trainings Available',
+  'noRoutesAvailable': 'No Routes Available',
 
   'distanceNotANumber': 'Distance Must Be A Number',
 

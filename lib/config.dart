@@ -16,7 +16,9 @@ class AppConfig {
   static const String trickEndpoint = '$apiBaseUrl/trick';
   static const String resetTrickEndpoint = '$apiBaseUrl/trick/reset';
   static const String trainingPlans = '$apiBaseUrl/training';
+  static const String routeEndpoint = '$apiBaseUrl/route/';
   static const String addRoute = '$apiBaseUrl/route/create';
+  static const String getRouteByMonth = '$apiBaseUrl/route/m';
 
   // img
   static const String logoImg = 'assets/images/logo.svg';

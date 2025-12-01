@@ -20,7 +20,7 @@ class TrainingRoute {
       name: json['name'],
       distance: json['distance'],
       estimatedTime: json['estimatedTime'],
-      date: json['date'],
+      date: DateTime.parse(json['date']),
       points: (json['points'] as List).map((p) => RoutePoint.fromJson(p)).toList(),
       photos: (json['photos'] as List).map((p) => RoutePhoto.fromJson(p)).toList(),
       caloriesBurned: json['caloriesBurned'],

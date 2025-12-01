@@ -75,6 +75,14 @@ class _AddTrainingState extends State<AddTraining> {
     }
   }
 
+  String fixIso(String iso) {
+    final parts = iso.split('-');
+    final y = parts[0];
+    final m = parts[1].padLeft(2, '0');
+    final d = parts[2].padLeft(2, '0');
+    return "$y-$m-$d";
+  }
+
   Future<void> _addRoute() async {
 
     setState(() => _isLoading = true);
@@ -112,23 +120,12 @@ class _AddTrainingState extends State<AddTraining> {
       return;
     }
 
-    final timeText = _timeController.text.trim();
-    final timeParts = timeText.split(':');
-
-    if (timeParts.length == 2) {
-      h = int.tryParse(timeParts[0]) ?? 0;
-      min = int.tryParse(timeParts[1]) ?? 0;
-    } else {
-      h = int.tryParse(timeText) ?? 0;
-      min = 0;
-    }
-
-    final dateTime = DateTime.parse(widget.dayIso!).add(Duration(hours: h, minutes: min));
+    final dateTime = DateTime.parse(fixIso(widget.dayIso!)).add(Duration(hours: h, minutes: min));
 
     final calories = NumUtils().countCalories(_selectedStyle, weight, duration, context.read<AppLanguage>());
 
     final route = TrainingRoute(
-      name: "TR/${widget.dayIso}/${_timeController.text}",
+      name: "TR/${widget.dayIso}/${dateTime.hour}:${dateTime.minute}",
       distance: double.tryParse(_distanceController.text) ?? 0.0,
       estimatedTime: duration.inSeconds, 
       date: dateTime,
@@ -136,13 +133,6 @@ class _AddTrainingState extends State<AddTraining> {
       photos: [],   
       caloriesBurned: calories,
     );
-
-    print(route.name);
-    print(route.distance);
-    print(route.estimatedTime);
-    print(route.points);
-    print(route.photos);
-    print(route.caloriesBurned);
 
     print(jsonEncode(route.toJson()));
 
@@ -168,7 +158,7 @@ class _AddTrainingState extends State<AddTraining> {
       if (mounted) {
           _timeController.clear();
           _distanceController.clear();
-          Navigator.pop(context);
+          Navigator.pop(context, true);
       }
     } else {
       // Obsługa błędów
@@ -233,7 +223,11 @@ class _AddTrainingState extends State<AddTraining> {
                 child: TextField(
                   decoration: InputDecoration(labelText: lang.t('hours')),
                   keyboardType: TextInputType.number,
-                  onChanged: (v) => h = int.tryParse(v) ?? 0,
+                  onChanged: (v) {
+                    setState(() {
+                      h = int.tryParse(v) ?? 0;
+                    });
+                  }
                 ),
               ),
               const SizedBox(width: 16),
@@ -241,7 +235,11 @@ class _AddTrainingState extends State<AddTraining> {
                 child: TextField(
                   decoration: InputDecoration(labelText: lang.t('minutes')),
                   keyboardType: TextInputType.number,
-                  onChanged: (v) => min = int.tryParse(v) ?? 0,
+                  onChanged: (v) {
+                    setState(() {
+                      min = int.tryParse(v) ?? 0;
+                    });
+                  }
                 ),
               ),
             ],
