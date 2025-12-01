@@ -147,6 +147,11 @@ const Map<String, String> eng = {
   'opt3': 'Slalom',
   'opt4': 'Freeskating',
 
+  'yourRoute': 'Your Route',
+  'routeName': 'Route Name',
+  'dateAndTime': 'Date And Time',
+  'caloriesBurned': 'Calories Burned',
+
 
   // ERROR
   'wrongLoginOrPassword': 'Incorrect login or password',

@@ -13,7 +13,7 @@ class RoutePoint {
       id: json['id'],
       latitude: json['latitude'],
       longitude: json['longitude'],
-      timestamp: json['timestamp'],
+      timestamp: DateTime.parse(json['timestamp']),
     );
   }
 

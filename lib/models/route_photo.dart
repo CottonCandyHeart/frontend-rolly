@@ -15,7 +15,7 @@ class RoutePhoto {
       latitude: json['latitude'],
       longitude: json['longitude'],
       imageUrl: json['imageUrl'],
-      timestamp: json['timestamp'],
+      timestamp: DateTime.parse(json['timestamp']),
     );
   }
 
