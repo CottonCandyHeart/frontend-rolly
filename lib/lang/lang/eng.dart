@@ -129,7 +129,7 @@ const Map<String, String> eng = {
   'chooseDate': 'Choose Date',
   'planTraining': 'Plan Training',
   'doneTrainings': ' Trainings done',
-  'futureTrainings': 'Incoming trainings',
+  'futureTrainings': 'Planned trainings',
 
   'trainingDate': 'Date',
   'trainingTime': 'Time',
@@ -151,6 +151,8 @@ const Map<String, String> eng = {
   'routeName': 'Route Name',
   'dateAndTime': 'Date And Time',
   'caloriesBurned': 'Calories Burned',
+  'yourTraining': 'Your Training',
+  'notes': 'Notes',
 
 
   // ERROR

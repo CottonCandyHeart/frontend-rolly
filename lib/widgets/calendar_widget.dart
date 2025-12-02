@@ -4,6 +4,7 @@ import 'package:frontend_rolly/models/route.dart';
 import 'package:frontend_rolly/models/training_plan.dart';
 import 'package:frontend_rolly/screens/add_training.dart';
 import 'package:frontend_rolly/screens/plan_training.dart';
+import 'package:frontend_rolly/screens/show_training_plan.dart';
 import 'package:frontend_rolly/screens/track_training.dart';
 import 'package:frontend_rolly/theme/colors.dart';
 import 'package:frontend_rolly/widgets/show_route.dart';
@@ -110,12 +111,6 @@ class _CustomCalendarState extends State<CustomCalendar>{
   @override
   void didUpdateWidget(covariant CustomCalendar oldWidget) {
     super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.chosen.month != widget.chosen.month ||
-        oldWidget.chosen.year != widget.chosen.year) {
-      
-      _loadMonth();
-    }
     _loadMonth();
   }
 
@@ -443,7 +438,6 @@ class _CustomCalendarState extends State<CustomCalendar>{
                                       ),
                                     );
 
-                                    // dopiero TERAZ odświeżaj
                                     if (result == true) {
                                       await widget.onRefresh?.call();
                                     }
@@ -459,21 +453,59 @@ class _CustomCalendarState extends State<CustomCalendar>{
                     ),
                   ),
               )],
-              if ((DateTime(chosen.year, chosen.month, selectedDay!)).isAfter(today)) ...[
-                Text(
-                  lang.t('futureTrainings'),
-                ),
-                ...selectedDayTrainings.map((t) => Container(
+
+              const SizedBox(height: 12),
+
+              if ((DateTime(chosen.year, chosen.month, selectedDay!)).isAfter(today) || isToday(selectedDay!)) ...[ 
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsetsGeometry.fromLTRB(25, 0, 0, 0),
+                      child: Text(
+                        lang.t('futureTrainings'),
+                        style: TextStyle(
+                          color: AppColors.text,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    )
+                  ),
+                  
+                  const SizedBox(height: 8),
+
+                ...selectedDayTrainings.map((t) => GestureDetector(
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ShowTrainingPlan(onBack: (){}, training: t),
+                        ),
+                      );
+                    },
+                    child: Container(
+                    width: MediaQuery.of(context).size.width * 0.75,
                     margin: const EdgeInsets.only(bottom: 8),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: AppColors.current,
                     ),
-                    child: Text(
-                      "${t.targetDuration} min — ${t.notes}",
-                      style: const TextStyle(color: AppColors.background),
+                    child: Row(
+                      children: [
+                        Text(
+                          t.dateTime.toString(),
+                          style: const TextStyle(color: AppColors.background),
+                        ),
+                        Spacer(),
+                        Icon(
+                          t.completed ? Icons.check_circle : Icons.radio_button_unchecked,
+                          color: t.completed ? AppColors.primary : AppColors.text,
+                          size: 30,
+                        ),
+                      ],
                     ),
-                  )),
+                  )
+                  ),
+                  ),
 
                 Center(
                   child: SizedBox(

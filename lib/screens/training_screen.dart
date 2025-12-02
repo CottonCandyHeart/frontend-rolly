@@ -113,10 +113,8 @@ class _TrainingState extends State<TrainingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          child: CustomCalendar(
+    return Scaffold(
+    body: CustomCalendar(
             trainings: () =>  _getListOfTrainings(chosen),
             routes: () =>  _getListOfRoutes(chosen),
             chosen: chosen,
@@ -125,11 +123,7 @@ class _TrainingState extends State<TrainingScreen> {
             onRefresh: () async {
               setState(() {});
             },
-          ),
-        ),
-        Spacer(),
-        SizedBox()
-      ],
+          )
     );
   }
 }
