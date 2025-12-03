@@ -123,6 +123,14 @@ const Map<String, String> eng = {
   'nov': 'November',
   'dec': 'December',
 
+  'mon': 'Mon',
+  'tue': 'Tue',
+  'wed': 'Wed',
+  'thu': 'Thu',
+  'fri': 'Fri',
+  'sat': 'Sat',
+  'sun': 'Sun',
+
   // TRAINING PLAN
   'addTraining': 'Add Training',
   'trackTraining': 'Track Training',
@@ -153,6 +161,9 @@ const Map<String, String> eng = {
   'caloriesBurned': 'Calories Burned',
   'yourTraining': 'Your Training',
   'notes': 'Notes',
+
+  'completed': 'Completed',
+  'editTraining': 'Edit Training',
 
 
   // ERROR
@@ -191,4 +202,8 @@ const Map<String, String> eng = {
   'Trick set as not mastered': 'Removed Trick From Mastered Tricks',
   'Reset Progress': 'Your Progress Has Been Removed',
   'Route created': 'Route Created',
+  'Training Plan created': 'Training Plan Created',
+  'Failed creating Training Plan': 'Failed Creating Training Plan',
+  'Success': 'Success',
+  'Failed': 'Failed',
 };

@@ -108,6 +108,10 @@ class _CustomCalendarState extends State<CustomCalendar>{
       'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
   ]);
 
+  final daysOfWeek = List.of([
+    'mon','tue','wed','thu','fri','sat','sun',
+  ]);
+
   @override
   void didUpdateWidget(covariant CustomCalendar oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -142,6 +146,11 @@ class _CustomCalendarState extends State<CustomCalendar>{
     final DateTime today = DateTime.now();
     DateTime chosen = widget.chosen;
     int daysInMonth = countDays(chosen);
+
+    final firstDayOfMonth = DateTime(chosen.year, chosen.month, 1); // 1 - Monday
+    final int startingWeekday = firstDayOfMonth.weekday;
+    final int startOffset = startingWeekday - 1;
+    final int totalItems = daysInMonth + startOffset;
 
     bool isToday(int day){
       return (day == today.day && chosen.month == today.month && chosen.year == today.year);
@@ -224,9 +233,34 @@ class _CustomCalendarState extends State<CustomCalendar>{
                         crossAxisCount: 7,
                         childAspectRatio: 1,
                       ),
-                      itemCount: daysInMonth,
+                      itemCount: 7,
                       itemBuilder: (context, index) {
-                        final day = index + 1;
+                        return Center(
+                          child: Text(
+                          lang.t(daysOfWeek[index]),
+                          style: TextStyle(
+                            color: AppColors.background,
+                          ),
+                          )
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 7,
+                        childAspectRatio: 1,
+                      ),
+                      itemCount: totalItems,
+                      itemBuilder: (context, index) {
+                        if (index < startOffset) {
+                          return Container();
+                        }
+
+                        final day = index - startOffset + 1;
                         final isHighlighted = highlightedDays.contains(day);
 
                         return GestureDetector(
@@ -306,84 +340,96 @@ class _CustomCalendarState extends State<CustomCalendar>{
                   const SizedBox(height: 8),
                     
                   ...selectedRoutes.map((t) => GestureDetector(
-                    onTap: (){
-                      Navigator.push(
+                    onTap: () async {
+                      final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => ShowRoute(onBack: (){}, route: t),
                         ),
                       );
+
+                      if (result == true) {
+                        await widget.onRefresh?.call();
+                      }
                     },
                     child: Container(
-                    width: MediaQuery.of(context).size.width * 0.75,
-                    margin: const EdgeInsets.only(bottom: 8),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppColors.current,
-                    ),
-                    child: Text(
-                      t.name,
-                      style: const TextStyle(color: AppColors.background),
-                    ),
-                  )
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.current,
+                      ),
+                      child: Text(
+                        t.name,
+                        style: const TextStyle(color: AppColors.background),
+                      ),
+                    )
                   ),
                   ),
-
-                  Center(
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.75,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => TrackTraining(onBack: (){},),
+                  if (isToday(selectedDay!)) ...[
+                    Center(
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      child: Row(
+                        children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => TrackTraining(
+                                        onBack: (){},
+                                        dayIso: '${chosen.year}-${chosen.month}-$selectedDay',
+                                      ),
+                                    ),
+                                  );
+                                },
+                              child: Container(
+                                decoration: BoxDecoration(color: AppColors.accent),
+                                padding: const EdgeInsets.all(8),
+                                margin: const EdgeInsets.only(top: 10, right: 5),
+                                child: Text(
+                                    lang.t('trackTraining'),
+                                    style: TextStyle(color: AppColors.text, fontSize: 12),
                                 ),
-                              );
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(color: AppColors.accent),
-                              padding: const EdgeInsets.all(8),
-                              margin: const EdgeInsets.only(top: 10, right: 5),
-                              child: Text(
-                                  lang.t('trackTraining'),
-                                  style: TextStyle(color: AppColors.text, fontSize: 12),
                               ),
                             ),
                           ),
-                        ),
-                        Container(
-                          width: 32,
-                          height: 32,
-                          margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                            decoration: BoxDecoration(color: AppColors.primary),
-                            child: Center(
-                              child: FittedBox(
-                                fit: BoxFit.fill,
-                                child: IconButton(
-                                  padding: EdgeInsets.zero,
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => TrackTraining(onBack: (){},),
-                                      ),
-                                    );
-                                  },
-                                  icon: const Icon(Icons.add),
-                                  color: AppColors.background,
-                                  iconSize: 30,
+                          
+                          Container(
+                            width: 32,
+                            height: 32,
+                            margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                              decoration: BoxDecoration(color: AppColors.primary),
+                              child: Center(
+                                child: FittedBox(
+                                  fit: BoxFit.fill,
+                                  child: IconButton(
+                                    padding: EdgeInsets.zero,
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => TrackTraining(
+                                            onBack: (){},
+                                            dayIso: '${chosen.year}-${chosen.month}-$selectedDay',
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    color: AppColors.background,
+                                    iconSize: 30,
+                                  ),
                                 ),
                               ),
-                            ),
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-              ),
+                ),
+              ],
               Center(
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.75,
@@ -474,33 +520,39 @@ class _CustomCalendarState extends State<CustomCalendar>{
                   const SizedBox(height: 8),
 
                 ...selectedDayTrainings.map((t) => GestureDetector(
-                    onTap: (){
-                      Navigator.push(
+                    onTap: () async {
+                      final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ShowTrainingPlan(onBack: (){}, training: t),
-                        ),
-                      );
+                          builder: (context) => ShowTrainingPlan(
+                            onBack: (){}, 
+                            training: t,
+                            dayIso: '${chosen.year}-${chosen.month}-$selectedDay',
+                            isToday: isToday(selectedDay!),
+                            ),
+                          )
+                        );
+                      if (result == true) {
+                          await widget.onRefresh?.call();
+                      };
                     },
                     child: Container(
                     width: MediaQuery.of(context).size.width * 0.75,
                     margin: const EdgeInsets.only(bottom: 8),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.current,
+                      color: AppColors.secondary,
                     ),
                     child: Row(
                       children: [
                         Text(
                           t.dateTime.toString(),
-                          style: const TextStyle(color: AppColors.background),
+                          style: const TextStyle(color: AppColors.text),
                         ),
                         Spacer(),
-                        Icon(
-                          t.completed ? Icons.check_circle : Icons.radio_button_unchecked,
-                          color: t.completed ? AppColors.primary : AppColors.text,
-                          size: 30,
-                        ),
+                        Icon(t.completed ? Icons.check_circle : Icons.radio_button_unchecked,
+                        color: t.completed ? AppColors.primary : AppColors.text,
+                        size: 30,),
                       ],
                     ),
                   )
@@ -514,13 +566,20 @@ class _CustomCalendarState extends State<CustomCalendar>{
                       children: [
                         Expanded(
                           child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
+                            onTap: () async {
+                              final result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => PlanTraining(onBack: (){},),
+                                  builder: (context) => PlanTraining(
+                                    onBack: (){}, 
+                                    dayIso: '${chosen.year}-${chosen.month}-$selectedDay',
+                                  ),
                                 ),
                               );
+
+                              if (result == true) {
+                                await widget.onRefresh?.call();
+                              }
                             },
                             child: Container(
                               decoration: BoxDecoration(color: AppColors.accent),
@@ -543,13 +602,20 @@ class _CustomCalendarState extends State<CustomCalendar>{
                                 fit: BoxFit.fill,
                                 child: IconButton(
                                   padding: EdgeInsets.zero,
-                                  onPressed: () {
-                                    Navigator.push(
+                                  onPressed: () async {
+                                    final result = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => PlanTraining(onBack: (){},),
+                                        builder: (context) => PlanTraining(
+                                          onBack: (){}, 
+                                          dayIso: '${chosen.year}-${chosen.month}-$selectedDay',
+                                        ),
                                       ),
                                     );
+
+                                    if (result == true) {
+                                      await widget.onRefresh?.call();
+                                    }
                                   },
                                   icon: const Icon(Icons.add),
                                   color: AppColors.background,

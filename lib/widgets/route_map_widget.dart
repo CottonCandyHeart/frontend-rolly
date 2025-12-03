@@ -20,8 +20,8 @@ class RouteMap extends StatelessWidget {
     return FlutterMap(
       options: MapOptions(
         initialCenter: latLngPoints.isNotEmpty
-            ? latLngPoints.first          // Jeśli są punkty → pierwszy punkt
-            : LatLng(52.2297, 21.0122),   // Jeśli brak → Warszawa
+            ? latLngPoints.first          // Jeśli są punkty -> pierwszy punkt
+            : LatLng(52.2297, 21.0122),   // Jeśli brak -> Warszawa
         initialZoom: latLngPoints.isNotEmpty ? 15 : 5,
       ),
       children: [

@@ -13,10 +13,20 @@ class TrainingPlan {
   factory TrainingPlan.fromJson(Map<String, dynamic> json) {
     return TrainingPlan(
       id: json['id'],
-      dateTime: json['dateTime'],
+      dateTime: DateTime.parse(json['dateTime']),
       targetDuration: json['targetDuration'],
       notes: json['notes'],
       completed: json['completed']
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'dateTime': dateTime.toIso8601String().split('.').first,
+      'targetDuration': targetDuration,
+      'notes': notes,
+      'completed': completed
+    };
   }
 }

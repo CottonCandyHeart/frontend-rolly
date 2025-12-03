@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 class TrackTraining extends StatefulWidget{
   final VoidCallback onBack;
+  final String? dayIso;
 
   const TrackTraining({
     super.key,
-    required this.onBack
+    required this.onBack,
+    required this.dayIso,
   });
 
   @override
