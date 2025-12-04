@@ -34,6 +34,7 @@ class CustomCalendar extends StatefulWidget {
 
 class _CustomCalendarState extends State<CustomCalendar>{
   List<int> highlightedDays = [];
+  List<int> daysWithPlannedTrainings = [];
 
   int? selectedDay;
   List<TrainingPlan> selectedDayTrainings = [];
@@ -49,15 +50,14 @@ class _CustomCalendarState extends State<CustomCalendar>{
       print("Plans fetched: ${plans.length}");
       setState(() {
         allTrainings = plans;
-        highlightedDays = extractTrainingDays(plans);
+        daysWithPlannedTrainings = extractTrainingDays(plans);
       });
     });
     widget.routes().then((routes) {
       print("Routes fetched: ${routes.length}");
       setState(() {
         allRoutes = routes;
-        final routeDays = extractRouteDays(routes);
-        highlightedDays = {...highlightedDays, ...routeDays}.toList();
+        highlightedDays = extractRouteDays(routes);
       });
     });
   }
@@ -129,13 +129,11 @@ class _CustomCalendarState extends State<CustomCalendar>{
     final plans = await widget.trainings();
     final routes = await widget.routes();
 
-    final planDays = extractTrainingDays(plans);
-    final routeDays = extractRouteDays(routes);
-
     setState(() {
       allTrainings = plans;
       allRoutes = routes;
-      highlightedDays = {...planDays, ...routeDays}.toList()..sort();
+      highlightedDays = extractRouteDays(routes);
+      daysWithPlannedTrainings = extractTrainingDays(plans);
     });
   }
 
@@ -262,6 +260,7 @@ class _CustomCalendarState extends State<CustomCalendar>{
 
                         final day = index - startOffset + 1;
                         final isHighlighted = highlightedDays.contains(day);
+                        final hasTraining = daysWithPlannedTrainings.contains(day);
 
                         return GestureDetector(
                           onTap: ()=>{
@@ -276,6 +275,12 @@ class _CustomCalendarState extends State<CustomCalendar>{
                             decoration: BoxDecoration(
                               color: isToday(day) ? AppColors.secondary : (isHighlighted ? AppColors.accent : AppColors.current),
                               borderRadius: BorderRadius.circular(6),
+                              border: hasTraining ? Border.all(
+                                color: ((DateTime(chosen.year, chosen.month, day)).isBefore(today) && isHighlighted) ? 
+                                      AppColors.text : AppColors.background, 
+                                width: 2.0,        
+                                style: BorderStyle.solid, 
+                              ) : null,
                             ),
                             child: Center(
                               child: Text(

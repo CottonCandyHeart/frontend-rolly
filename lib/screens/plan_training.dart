@@ -8,6 +8,7 @@ import 'package:frontend_rolly/theme/colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:frontend_rolly/models/notification.dart';
 
 class PlanTraining extends StatefulWidget{
   final VoidCallback onBack;
@@ -42,6 +43,46 @@ class _PlanTrainingState extends State<PlanTraining> {
     final m = parts[1].padLeft(2, '0');
     final d = parts[2].padLeft(2, '0');
     return "$y-$m-$d";
+  }
+
+  Future<void> _createNotification() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token');
+
+    if (token == null) {
+      setState(() => _isLoading = false);
+      return;
+    }
+
+    final dateTime = DateTime.parse(fixIso(widget.dayIso!)).add(Duration(hours: (h == 0) ? 23 : (h - 1), minutes: min));
+
+    final notification = CustomNotification(
+      id: 0,
+      title: context.read<AppLanguage>().t('planTrainingTitle'),
+      message: context.read<AppLanguage>().t('planTrainingMessage'),
+      sentAt: dateTime,
+      read: false,
+    );
+
+    print(jsonEncode(notification.toJson()));
+
+
+    final url = Uri.parse(AppConfig.addNotification); 
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(notification.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+
+      if (mounted) {
+          _notesController.clear();
+      }
+    }
   }
 
   Future<void> _addTrainingPlan() async {
@@ -83,6 +124,7 @@ class _PlanTrainingState extends State<PlanTraining> {
 
     if (response.statusCode == 200) {
       final message = response.body;
+      await _createNotification();
 
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(context.read<AppLanguage>().t('$message'))),
@@ -90,6 +132,7 @@ class _PlanTrainingState extends State<PlanTraining> {
 
       if (mounted) {
           _notesController.clear();
+          
           Navigator.pop(context, true);
       }
     } else {

@@ -23,11 +23,15 @@ class AppConfig {
   static const String trainingPlans = '$apiBaseUrl/training';
   static const String addTrainingPlan = '$trainingPlans/add';
   static const String markCompletedTrainingPlan = '$trainingPlans/mark';
+  static const String updateTrainingPlan = '$trainingPlans/modify';
 
   static const String rEndpoint = '$apiBaseUrl/route';
   static const String routeEndpoint = '$rEndpoint/';
   static const String addRoute = '$rEndpoint/create';
   static const String getRouteByMonth = '$rEndpoint/m';
+
+  static const String notificationEndpoint = '$apiBaseUrl/notification';
+  static const String addNotification = '$notificationEndpoint/add';
 
   // img
   static const String logoImg = 'assets/images/logo.svg';

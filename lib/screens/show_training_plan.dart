@@ -107,12 +107,11 @@ class _ShowTrainingPlanState extends State<ShowTrainingPlan>{
         final result = await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => EditTraining(onBack: (){}),
+            builder: (context) => EditTraining(onBack: (){}, dayIso: widget.dayIso, training: widget.training,),
           ),
         );
 
         if (result == true) {
-          await _setTrainingCompleted();
           if (mounted) {
              Navigator.pop(context, true); 
           }
@@ -185,7 +184,7 @@ class _ShowTrainingPlanState extends State<ShowTrainingPlan>{
                                   alignment: AlignmentDirectional.centerEnd,
                                   child: Text(
                                     widget.training.notes,
-                                    textAlign: TextAlign.justify,
+                                    textAlign: TextAlign.right,
                                     softWrap: true,
                                     overflow: TextOverflow.visible,
                                     style: TextStyle(color: AppColors.text,))

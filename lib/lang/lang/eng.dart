@@ -165,6 +165,10 @@ const Map<String, String> eng = {
   'completed': 'Completed',
   'editTraining': 'Edit Training',
 
+  // NOTIFICATIONS
+  'planTrainingTitle': 'Training Reminder',
+  'planTrainingMessage': 'Your Training Starts In 1 Hour',
+
 
   // ERROR
   'wrongLoginOrPassword': 'Incorrect login or password',
@@ -206,4 +210,6 @@ const Map<String, String> eng = {
   'Failed creating Training Plan': 'Failed Creating Training Plan',
   'Success': 'Success',
   'Failed': 'Failed',
+  'Notification added': 'Notification Added',
+  'Failed: adding notification': 'Failed: Adding Notification',
 };
