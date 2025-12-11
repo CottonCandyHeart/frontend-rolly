@@ -38,34 +38,42 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              SizedBox(width: MediaQuery.of(context).size.width * 0.35),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(2),
-                    width: 30,
-                    height: 30,
-                    child: Center(
-                      child: SvgPicture.asset(
-                        AppConfig.logoImg,
-                        height: 30,
+              children: [
+                SizedBox(width: MediaQuery.of(context).size.width * 0.35),
+                GestureDetector(
+                  onTap: (){
+                    setState(() {
+                      _currentIndex = 0;
+                    });
+                  },
+                  child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(2),
+                      width: 30,
+                      height: 30,
+                      child: Center(
+                        child: SvgPicture.asset(
+                          AppConfig.logoImg,
+                          height: 30,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: MediaQuery.of(context).size.width * 0.02),
-                  Text(
-                    widget.title,
-                    style: GoogleFonts.dancingScript(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 25,
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+                    Text(
+                      widget.title,
+                      style: GoogleFonts.dancingScript(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 25,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              
               Spacer(),
               IconButton(
                 icon: Icon(Icons.settings, color: AppColors.text),

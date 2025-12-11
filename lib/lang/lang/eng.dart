@@ -24,6 +24,7 @@ const Map<String, String> eng = {
   'update': 'Update',
   'mastered': 'Mastered',
   'notMastered': 'Master',
+  'delete': 'Delete',
 
   // USER DATA
   'username': 'Username',
@@ -170,6 +171,53 @@ const Map<String, String> eng = {
   'planTrainingMessage': 'Your Training Starts In 1 Hour',
 
 
+  // MEETINGS
+  'manageMeetings': 'Manage Your Meetings',
+  'yourMeetings': 'Meetings You Take Part In',
+  'findMeetings': 'Find Meetings',
+  'noMeetingsAvailable': 'Meetings Not Available',
+  'chooseCity': 'Choose City',
+  'addMeeting': 'Add Meeting',
+
+  'levelOpt1': 'Beginner',
+  'levelOpt2': 'Intermediate',
+  'levelOpt3': 'Advanced',
+  'levelOpt4': 'Expert',
+
+  'Beginner': 'Beginner',
+  'Intermediate': 'Intermediate',
+  'Advanced': 'Advanced',
+  'Expert': 'Expert',
+
+  'typeOpt1': 'Slalom',
+  'typeOpt2': 'Freeskate',
+  'typeOpt3': 'Skatepark',
+  'typeOpt4': 'Recreation',
+
+  'Slalom': 'Slalom',
+  'Freeskate': 'Freeskate',
+  'Skatepark': 'Skatepark',
+  'Recreation': 'Recreation',
+
+  'eventName': 'Event name',
+  'name': 'Name',
+  'description': 'Description',
+
+  'chooseLevel': 'Choose Level',
+  'locationName': 'Location Name',
+  'location': 'Location',
+  'ageRange': 'Age Range',
+  'numberOfParticipants': 'Number of Participants',
+  'or': 'OR',
+  'addNewLocation': 'Add New Location',
+  'addLocation': 'Add Location',
+
+  'age': 'Age',
+  'organizer': 'Organizer',
+
+  // COOUNTRIES
+  'PL': 'Poland',
+
   // ERROR
   'wrongLoginOrPassword': 'Incorrect login or password',
   'differentPasswd': 'Password does not match',
@@ -197,6 +245,7 @@ const Map<String, String> eng = {
   'noRoutesAvailable': 'No Routes Available',
 
   'distanceNotANumber': 'Distance Must Be A Number',
+  'locationShouldNotBeEmpty' : 'Location Should Not Be Empty',
 
   // ENDPOINTS REQUEST
   'Wrong password!': 'Wrong Password!',
@@ -212,4 +261,9 @@ const Map<String, String> eng = {
   'Failed': 'Failed',
   'Notification added': 'Notification Added',
   'Failed: adding notification': 'Failed: Adding Notification',
+  'Event created': 'Event Created',
+  'Failed creating event': 'Failed Creating Event',
+  'Location added successfully': 'Location Added Successfully',
+  'Location already exists': 'Location Already Exists',
+  'Event deleted successfully': 'Event Deleted Successfully',
 };

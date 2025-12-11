@@ -36,6 +36,7 @@ class _EducationState extends State<EducationScreen> {
       Uri.parse(AppConfig.getCategoryEndpoint),
       headers: {
         'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
       },
     );
 

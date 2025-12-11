@@ -33,6 +33,17 @@ class AppConfig {
   static const String notificationEndpoint = '$apiBaseUrl/notification';
   static const String addNotification = '$notificationEndpoint/add';
 
+  static const String eventEndpoint = '$apiBaseUrl/event';
+  static const String getEventByCity = '$eventEndpoint/c';
+  static const String getUserEvents = '$eventEndpoint/u';
+  static const String getParticipants = '$eventEndpoint/participants';
+  static const String deleteEvent = '$eventEndpoint/del';
+
+  static const String locationEndpoint = '$apiBaseUrl/locations';
+  static const String addLocation = '$locationEndpoint/add';
+  static const String getLocations = '$locationEndpoint/';
+  static const String getLocationByName = '$locationEndpoint/get';
+
   // img
   static const String logoImg = 'assets/images/logo.svg';
   static const String logoLightImg = 'assets/images/logo-light.svg';
