@@ -217,6 +217,9 @@ const Map<String, String> eng = {
   'age': 'Age',
   'organizer': 'Organizer',
 
+  'noMeetingsAttended': 'No Meetings Attended',
+  
+
   // COOUNTRIES
   'PL': 'Poland',
 

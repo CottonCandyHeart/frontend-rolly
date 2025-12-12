@@ -13,7 +13,8 @@ import 'package:provider/provider.dart';
 
 class MeetingWidget extends StatefulWidget { 
   const MeetingWidget(
-    { super.key, required this.selectedMeeting, required this.onBack, required this.onMeetingUpdated, required this.onRefresh}
+    { super.key, required this.selectedMeeting, required this.onBack, required this.onMeetingUpdated, 
+    required this.onRefresh}
   ); 
 
   final Meeting selectedMeeting; 
@@ -29,6 +30,7 @@ class _MeetingWidgetState  extends State<MeetingWidget> {
   Location? location;
   int? noOfParticipants;
   bool isOwner = false;
+  bool isAttended = false;
 
   bool _isLoading = false;
 
@@ -39,6 +41,7 @@ class _MeetingWidgetState  extends State<MeetingWidget> {
   }
 
   Future<void> _loadAllInitialData() async {
+    await _amIAttendee();
     await _amIOwner();
     await _getNoOfParticipants();
     
@@ -140,6 +143,52 @@ class _MeetingWidgetState  extends State<MeetingWidget> {
       if (!mounted) return;
   }
 
+  Future<void> _amIAttendee() async{
+    final prefs = await SharedPreferences.getInstance(); 
+    final token = prefs.getString('jwt_token')!; 
+    final url = '${AppConfig.checkAttendee}/${Uri.encodeComponent(widget.selectedMeeting.name)}';
+    final response = await http.get( 
+      Uri.parse(url), 
+      headers: {'Authorization': 'Bearer $token'},
+    ); 
+    
+    try {
+        if (response.statusCode == 200) {
+            final parsed = jsonDecode(response.body);
+            print('API ATTENDEE DATA (JSON): $parsed');
+
+            if (!mounted) return;
+
+            setState(() {
+                isAttended = parsed is bool ? parsed : false; 
+            });
+
+        } else {
+            print('Status ${response.statusCode}, Body: ${response.body}');
+            
+            if (!mounted) return;
+            
+            setState(() {
+                isAttended = false;
+            });
+             ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(context.read<AppLanguage>().t('actionFailed'))),
+            );
+        }
+      } catch (e) {
+          print('$e');
+          if (!mounted) return;
+          setState(() {
+              isOwner = false;
+          });
+      }
+
+      print('Attendee: $isOwner');
+      print('Attendee: ${response.statusCode}');
+
+      if (!mounted) return;
+  }
+
   Future<void> _deleteEvent() async {
     final prefs = await SharedPreferences.getInstance(); 
     final token = prefs.getString('jwt_token')!; 
@@ -172,6 +221,36 @@ class _MeetingWidgetState  extends State<MeetingWidget> {
         SnackBar(content: Text(context.read<AppLanguage>().t('actionFailed'))),
       );
     }
+  }
+
+  Future<void> _deleteNotification() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token');
+
+    if (token == null) {
+      setState(() => _isLoading = false);
+      return;
+    }
+
+    final dateTime = DateTime.parse('${widget.selectedMeeting.dateTime.year}-${widget.selectedMeeting.dateTime.month}-${widget.selectedMeeting.dateTime.day}').add(Duration(hours: (widget.selectedMeeting.dateTime.hour == 0) ? 23 : (widget.selectedMeeting.dateTime.hour - 1), minutes: widget.selectedMeeting.dateTime.minute));
+
+    final notification = CustomNotification(
+      id: 0,
+      title: context.read<AppLanguage>().t('joinedEventTitle'),
+      message: context.read<AppLanguage>().t('joinedEventMessage'),
+      sentAt: dateTime,
+      read: false,
+    );
+
+    final url = Uri.parse(AppConfig.removeNotification); 
+    final response = await http.delete(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(notification.toJson()),
+    );
   }
 
   Future<void> _createNotification() async {
@@ -240,6 +319,42 @@ class _MeetingWidgetState  extends State<MeetingWidget> {
       if (mounted) {
         await _getNoOfParticipants();
         await _createNotification();
+      }
+    } else {
+      // Obsługa błędów
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.read<AppLanguage>().t('actionFailed'))),
+      );
+    }
+  }
+
+  Future<void> _leaveEvent() async {
+    final prefs = await SharedPreferences.getInstance(); 
+    final token = prefs.getString('jwt_token')!; 
+    final url = '${AppConfig.eventEndpoint}/'; 
+
+    widget.selectedMeeting.action = 'leave';
+
+    final response = await http.post( 
+        Uri.parse(url), 
+        headers: {
+          'Authorization': 'Bearer $token', 
+          'Content-Type': 'application/json',
+        }, 
+        body: jsonEncode(widget.selectedMeeting.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      final message = response.body;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.read<AppLanguage>().t('$message'))),
+      );
+
+      if (mounted) {
+        await _getNoOfParticipants();
+        await _deleteNotification();
       }
     } else {
       // Obsługa błędów
@@ -437,7 +552,8 @@ class _MeetingWidgetState  extends State<MeetingWidget> {
                           ],
                           GestureDetector(
                             onTap: (){
-                              if (!isOwner){_joinEvent();};
+                              if (!isOwner && !isAttended){_joinEvent(); setState((){isAttended = true;});}
+                              else if (!isOwner && isAttended){_leaveEvent(); setState((){isAttended = false;});}
                             },
                             child: Container(
                               width: 80,

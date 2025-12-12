@@ -18,6 +18,7 @@ class MeetingScreen extends StatefulWidget {
 class _MeetingScreenState extends State<MeetingScreen>{
   String? selected;
   Meeting? selectedMeeting;
+  bool isAttended = false;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +57,7 @@ class _MeetingScreenState extends State<MeetingScreen>{
             selectedMeeting = meeting;
           });
         },
+        onRefresh: () => setState((){}),
       );
     }
     

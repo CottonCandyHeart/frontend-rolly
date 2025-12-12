@@ -32,6 +32,7 @@ class AppConfig {
 
   static const String notificationEndpoint = '$apiBaseUrl/notification';
   static const String addNotification = '$notificationEndpoint/add';
+  static const String removeNotification = '$notificationEndpoint/remove';
 
   static const String eventEndpoint = '$apiBaseUrl/event';
   static const String getEventByCity = '$eventEndpoint/c';
@@ -39,6 +40,8 @@ class AppConfig {
   static const String getParticipants = '$eventEndpoint/participants';
   static const String deleteEvent = '$eventEndpoint/del';
   static const String checkOwner = '$eventEndpoint/check';
+  static const String checkAttendee = '$checkOwner/at';
+  static const String getUserAttendedEvents = '$eventEndpoint/up';
 
   static const String locationEndpoint = '$apiBaseUrl/locations';
   static const String addLocation = '$locationEndpoint/add';
