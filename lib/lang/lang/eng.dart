@@ -169,6 +169,8 @@ const Map<String, String> eng = {
   // NOTIFICATIONS
   'planTrainingTitle': 'Training Reminder',
   'planTrainingMessage': 'Your Training Starts In 1 Hour',
+  'joinedEventTitle': 'Meeting Reminder',
+  'joinedEventMessage': 'Your Meeting Starts In 1 Hour',
 
 
   // MEETINGS

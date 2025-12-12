@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend_rolly/config.dart'; 
 import 'package:frontend_rolly/lang/app_language.dart';
 import 'package:frontend_rolly/models/location.dart';
-import 'package:frontend_rolly/models/meeting.dart'; 
+import 'package:frontend_rolly/models/meeting.dart';
+import 'package:frontend_rolly/models/notification.dart'; 
 import 'package:frontend_rolly/theme/colors.dart';
 import 'package:frontend_rolly/widgets/location_map.dart'; 
 import 'package:http/http.dart' as http; 
@@ -28,6 +29,8 @@ class _MeetingWidgetState  extends State<MeetingWidget> {
   Location? location;
   int? noOfParticipants;
   bool isOwner = false;
+
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -171,6 +174,46 @@ class _MeetingWidgetState  extends State<MeetingWidget> {
     }
   }
 
+  Future<void> _createNotification() async {
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token');
+
+    if (token == null) {
+      setState(() => _isLoading = false);
+      return;
+    }
+
+    final dateTime = DateTime.parse('${widget.selectedMeeting.dateTime.year}-${widget.selectedMeeting.dateTime.month}-${widget.selectedMeeting.dateTime.day}').add(Duration(hours: (widget.selectedMeeting.dateTime.hour == 0) ? 23 : (widget.selectedMeeting.dateTime.hour - 1), minutes: widget.selectedMeeting.dateTime.minute));
+
+    final notification = CustomNotification(
+      id: 0,
+      title: context.read<AppLanguage>().t('joinedEventTitle'),
+      message: context.read<AppLanguage>().t('joinedEventMessage'),
+      sentAt: dateTime,
+      read: false,
+    );
+
+    print(jsonEncode(notification.toJson()));
+
+
+    final url = Uri.parse(AppConfig.addNotification); 
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(notification.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      if (mounted) {
+          setState(() {});
+      }
+    }
+  }
+
   Future<void> _joinEvent() async{
     final prefs = await SharedPreferences.getInstance(); 
     final token = prefs.getString('jwt_token')!; 
@@ -196,6 +239,7 @@ class _MeetingWidgetState  extends State<MeetingWidget> {
 
       if (mounted) {
         await _getNoOfParticipants();
+        await _createNotification();
       }
     } else {
       // Obsługa błędów
