@@ -266,4 +266,5 @@ const Map<String, String> eng = {
   'Location added successfully': 'Location Added Successfully',
   'Location already exists': 'Location Already Exists',
   'Event deleted successfully': 'Event Deleted Successfully',
+  'Joined event': 'Event Joined',
 };

@@ -42,7 +42,9 @@ class _FindMeetingsWidgetState  extends State<FindMeetingsWidget> {
   }
 
   void _loadMeetings() async {
-    _meetingFuture = fetchMeetings();
+    setState(() {
+      _meetingFuture = fetchMeetings();
+    });
     final meetingsList = await _meetingFuture;
     _meetings = meetingsList.map((m) => m).toList();
   }
@@ -50,7 +52,7 @@ class _FindMeetingsWidgetState  extends State<FindMeetingsWidget> {
   Future<List<City>> _getCities() async {
     final prefs = await SharedPreferences.getInstance(); 
     final token = prefs.getString('jwt_token')!; 
-    final url = "${AppConfig.getEventByCity}";
+    final url = AppConfig.getEventByCity;
     final response = await http.get( Uri.parse(url), headers: {'Authorization': 'Bearer $token'}, ); 
     final List data = jsonDecode(response.body); return data.map((e) => City.fromJson(e)).toList();
   }
@@ -61,7 +63,16 @@ class _FindMeetingsWidgetState  extends State<FindMeetingsWidget> {
     final url = "${AppConfig.getEventByCity}/$_selectedCity/up"; 
     
     final response = await http.get( Uri.parse(url), headers: {'Authorization': 'Bearer $token', 
-        'Content-Type': 'application/json',}, ); 
+        'Content-Type': 'application/json',}, );
+
+    print(url);
+    print(jsonDecode(response.body));
+
+    if (_selectedCity == null || _selectedCity!.isEmpty) {
+      return [];
+    }
+
+    print(jsonDecode(response.body));
 
     if (response.statusCode != 200) {
       print("Server error: ${response.body}");
@@ -106,29 +117,33 @@ class _FindMeetingsWidgetState  extends State<FindMeetingsWidget> {
                           ],
                         ),
                         const SizedBox(height: 20), 
-                        DropdownButtonFormField<String>(
-                          value: _selectedCity,
-                          decoration: InputDecoration(
-                            labelText: lang.t('chooseCity'),
-                            filled: true,
-                            fillColor: AppColors.accent,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(25),
+                        Padding(
+                          padding: EdgeInsetsGeometry.fromLTRB(10, 0, 10, 0),
+                          child: DropdownButtonFormField<String>(
+                            value: _selectedCity,
+                            decoration: InputDecoration(
+                              labelText: lang.t('chooseCity'),
+                              filled: true,
+                              fillColor: AppColors.accent,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
                             ),
-                          ),
-                          items: _cities.map((style) {
-                            return DropdownMenuItem(
-                              value: style,
-                              child: Text(style),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedCity = value;
+                            items: _cities.map((style) {
+                              return DropdownMenuItem(
+                                value: style,
+                                child: Text(style),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedCity = value;
                               _loadMeetings();
-                            });
-                          },
+                              });
+                            },
+                          ),
                         ),
+                        
                         SizedBox(height: 32,),
                         Text( lang.t('chooseCity'), 
                           style: const TextStyle( 
@@ -144,7 +159,6 @@ class _FindMeetingsWidgetState  extends State<FindMeetingsWidget> {
                   
                 ); 
               } 
-              
               return Padding(
                 padding: EdgeInsetsGeometry.all(10),
                 child: Column( 
@@ -164,33 +178,37 @@ class _FindMeetingsWidgetState  extends State<FindMeetingsWidget> {
                         ),  
                       ],
                     ),
-                  DropdownButtonFormField<String>(
-                    value: _selectedCity,
-                    decoration: InputDecoration(
-                      labelText: lang.t('chooseCity'),
-                      filled: true,
-                      fillColor: AppColors.accent,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
+                  const SizedBox(height: 20), 
+                  Padding(
+                    padding: EdgeInsetsGeometry.fromLTRB(10, 0, 10, 0),
+                    child: DropdownButtonFormField<String>(
+                      value: _selectedCity,
+                      decoration: InputDecoration(
+                        labelText: lang.t('chooseCity'),
+                        filled: true,
+                        fillColor: AppColors.accent,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
                       ),
-                    ),
-                    items: _cities.map((style) {
-                      return DropdownMenuItem(
-                        value: style,
-                        child: Text(style),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedCity = value;
+                      items: _cities.map((style) {
+                        return DropdownMenuItem(
+                          value: style,
+                          child: Text(style),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedCity = value;
                         _loadMeetings();
-                      });
-                    },
+                        });
+                      },
+                    ),
                   ),
 
                   SizedBox(height: 24,),
                     
-                    ..._meetings.map((meeting) { 
+                    ...snapshot.data!.map((meeting) { 
                       return GestureDetector( 
                         onTap: () => widget.onMeetingSelected(meeting), 
                         child: Container( 
@@ -199,24 +217,64 @@ class _FindMeetingsWidgetState  extends State<FindMeetingsWidget> {
                             padding: const EdgeInsets.all(20), 
                             width: MediaQuery.of(context).size.width * 0.75, 
                             margin: const EdgeInsets.only(top: 20), 
-                            child: Center( 
-                              child: Row( 
+                            child: Row( 
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [ 
-                                  Text( 
-                                    meeting.name, 
-                                    style: const TextStyle( 
-                                      color: AppColors.text, 
-                                      fontFamily: 'Poppins-Bold', 
-                                      fontSize: 20, 
-                                    ), 
+                                  Container( 
+                                    width: 50,
+                                    height: 50, 
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary,
+                                    ),
+                                    child: Icon(
+                                      Icons.people_alt_outlined,
+                                      color: AppColors.background,
+                                      size: 40,
+                                    ),
                                   ), 
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 10),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          meeting.name,
+                                          textAlign: TextAlign.left,
+                                          style: const TextStyle( 
+                                            color: AppColors.text, 
+                                            fontFamily: 'Poppins-Bold', 
+                                            fontSize: 12, 
+                                          ),
+                                        ),
+                                        Text(
+                                          '${meeting.dateTime.year}-${meeting.dateTime.month.toString().padLeft(2, '0')}-${meeting.dateTime.day.toString().padLeft(2, '0')}', 
+                                          textAlign: TextAlign.left,
+                                          style: const TextStyle( 
+                                            color: AppColors.text, 
+                                            fontFamily: 'Poppins-Bold', 
+                                            fontSize: 12, 
+                                          ),
+                                        ),
+                                        Text(
+                                          '${meeting.dateTime.hour.toString().padLeft(2, '0')}:${meeting.dateTime.minute.toString().padLeft(2, '0')}', 
+                                          textAlign: TextAlign.left,
+                                          style: const TextStyle( 
+                                            color: AppColors.text, 
+                                            fontFamily: 'Poppins-Bold', 
+                                            fontSize: 12, 
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ] 
-                              ), 
                             ), 
                           ), 
                         ); 
                       }
-                    ), 
+                    ),
                   ], 
                 )
               );

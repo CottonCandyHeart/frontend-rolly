@@ -8,7 +8,7 @@ class Meeting {
   final String age;
   final int numberOfParticipants;
   final String locationName;
-  final String action;
+  String action;
 
   Meeting({
     required this.name, required this.description, required this.organizerUsername, required this.dateTime, required this.level, 

@@ -38,6 +38,7 @@ class AppConfig {
   static const String getUserEvents = '$eventEndpoint/u';
   static const String getParticipants = '$eventEndpoint/participants';
   static const String deleteEvent = '$eventEndpoint/del';
+  static const String checkOwner = '$eventEndpoint/check';
 
   static const String locationEndpoint = '$apiBaseUrl/locations';
   static const String addLocation = '$locationEndpoint/add';

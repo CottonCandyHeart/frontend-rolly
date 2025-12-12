@@ -27,12 +27,19 @@ class MeetingWidget extends StatefulWidget {
 class _MeetingWidgetState  extends State<MeetingWidget> {
   Location? location;
   int? noOfParticipants;
+  bool isOwner = false;
 
   @override
   void initState() {
     super.initState();
-    _loadLocation();
-    _getNoOfParticipants();
+    _loadAllInitialData();
+  }
+
+  Future<void> _loadAllInitialData() async {
+    await _amIOwner();
+    await _getNoOfParticipants();
+    
+    await _loadLocation();
   }
 
   Future<void> _loadLocation() async {
@@ -62,10 +69,72 @@ class _MeetingWidgetState  extends State<MeetingWidget> {
 
     if (!mounted) return;
 
-    print(jsonDecode(response.body));
-    setState(() {
-      noOfParticipants = parsed;
-    });
+    if (response.statusCode == 200) {
+        final parsed = jsonDecode(response.body);
+
+        print('API PARTICIPANTS DATA (JSON): $parsed');
+        setState(() {
+          noOfParticipants = parsed is int ? parsed : int.tryParse(parsed.toString()); 
+        });
+    } else {
+        print('Status ${response.statusCode}, Body: ${response.body}');
+
+        setState(() {
+            noOfParticipants = 0; 
+        });
+        
+        if (mounted) {
+             ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(context.read<AppLanguage>().t('actionFailed'))),
+            );
+        }
+    }
+  }
+
+  Future<void> _amIOwner() async {
+    final prefs = await SharedPreferences.getInstance(); 
+    final token = prefs.getString('jwt_token')!; 
+    final url = '${AppConfig.checkOwner}/${Uri.encodeComponent(widget.selectedMeeting.name)}';
+    final response = await http.get( 
+      Uri.parse(url), 
+      headers: {'Authorization': 'Bearer $token'},
+    ); 
+    
+    try {
+        if (response.statusCode == 200) {
+            final parsed = jsonDecode(response.body);
+            print('API OWNER DATA (JSON): $parsed');
+
+            if (!mounted) return;
+
+            setState(() {
+                isOwner = parsed is bool ? parsed : false; 
+            });
+
+        } else {
+            print('Status ${response.statusCode}, Body: ${response.body}');
+            
+            if (!mounted) return;
+            
+            setState(() {
+                isOwner = false;
+            });
+             ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(context.read<AppLanguage>().t('actionFailed'))),
+            );
+        }
+      } catch (e) {
+          print('$e');
+          if (!mounted) return;
+          setState(() {
+              isOwner = false;
+          });
+      }
+
+      print('Owner: $isOwner');
+      print('Owner: ${response.statusCode}');
+
+      if (!mounted) return;
   }
 
   Future<void> _deleteEvent() async {
@@ -93,6 +162,41 @@ class _MeetingWidgetState  extends State<MeetingWidget> {
 
       if (!mounted) return;
       
+    } else {
+      // Obsługa błędów
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.read<AppLanguage>().t('actionFailed'))),
+      );
+    }
+  }
+
+  Future<void> _joinEvent() async{
+    final prefs = await SharedPreferences.getInstance(); 
+    final token = prefs.getString('jwt_token')!; 
+    final url = '${AppConfig.eventEndpoint}/'; 
+
+    widget.selectedMeeting.action = 'join';
+
+    final response = await http.post( 
+        Uri.parse(url), 
+        headers: {
+          'Authorization': 'Bearer $token', 
+          'Content-Type': 'application/json',
+        }, 
+        body: jsonEncode(widget.selectedMeeting.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      final message = response.body;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.read<AppLanguage>().t('$message'))),
+      );
+
+      if (mounted) {
+        await _getNoOfParticipants();
+      }
     } else {
       // Obsługa błędów
       if (!mounted) return;
@@ -264,29 +368,33 @@ class _MeetingWidgetState  extends State<MeetingWidget> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SizedBox(width: 20),
-                          GestureDetector(
-                            onTap: _deleteEvent,
-                            child: Container(
-                              width: 80,
-                              height: 80,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(50.0)),
-                                color: Colors.red,
-                              ),
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  lang.t('delete'),
-                                  style: TextStyle(
-                                    color: AppColors.background,
-                                    fontSize: 18,
+                          if (isOwner) ...[
+                            GestureDetector(
+                              onTap: _deleteEvent,
+                              child: Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                                  color: Colors.red,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    lang.t('delete'),
+                                    style: TextStyle(
+                                      color: AppColors.background,
+                                      fontSize: 18,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
+                          ],
                           GestureDetector(
-                            onTap: (){},
+                            onTap: (){
+                              if (!isOwner){_joinEvent();};
+                            },
                             child: Container(
                               width: 80,
                               height: 80,
