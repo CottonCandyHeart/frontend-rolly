@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:frontend_rolly/config.dart';
 import 'package:frontend_rolly/lang/app_language.dart';
+import 'package:frontend_rolly/models/meeting.dart';
 import 'package:frontend_rolly/models/route.dart';
 import 'package:frontend_rolly/models/training_plan.dart';
 import 'package:frontend_rolly/screens/add_training.dart';
@@ -7,8 +11,11 @@ import 'package:frontend_rolly/screens/plan_training.dart';
 import 'package:frontend_rolly/screens/show_training_plan.dart';
 import 'package:frontend_rolly/screens/track_training.dart';
 import 'package:frontend_rolly/theme/colors.dart';
+import 'package:frontend_rolly/widgets/meeting_widget.dart';
 import 'package:frontend_rolly/widgets/show_route.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomCalendar extends StatefulWidget {
   final Future<List<TrainingPlan>> Function() trainings;
@@ -33,15 +40,19 @@ class CustomCalendar extends StatefulWidget {
 }
 
 class _CustomCalendarState extends State<CustomCalendar>{
+
   List<int> highlightedDays = [];
   List<int> daysWithPlannedTrainings = [];
+  List<int> daysWithMeetings = [];
 
   int? selectedDay;
   List<TrainingPlan> selectedDayTrainings = [];
   List<TrainingRoute> selectedRoutes = [];
+  List<Meeting> selectedMeetings = [];
 
   List<TrainingPlan> allTrainings = [];
   List<TrainingRoute> allRoutes = [];
+  List<Meeting> allMeetings = [];
 
   @override
   void initState() {
@@ -60,6 +71,15 @@ class _CustomCalendarState extends State<CustomCalendar>{
         highlightedDays = extractRouteDays(routes);
       });
     });
+    _fetchAllMeetings();
+  }
+
+  List<Meeting> meetingsForDay(int day) {
+    return allMeetings.where((m) =>
+      m.dateTime.year == widget.chosen.year &&
+      m.dateTime.month == widget.chosen.month &&
+      m.dateTime.day == day
+    ).toList();
   }
 
   List<TrainingPlan> trainingsForDay(int day) {
@@ -78,6 +98,13 @@ class _CustomCalendarState extends State<CustomCalendar>{
     ).toList();
   }
 
+  List<int> extractMeetingDays(List<Meeting> meetings) {
+    return meetings
+        .map((m) => m.dateTime.day)
+        .toSet()
+        .toList()
+      ..sort();
+  }
 
   List<int> extractTrainingDays(List<TrainingPlan> plans) {
     return plans
@@ -135,6 +162,34 @@ class _CustomCalendarState extends State<CustomCalendar>{
       highlightedDays = extractRouteDays(routes);
       daysWithPlannedTrainings = extractTrainingDays(plans);
     });
+  }
+
+  Future<void> _fetchAllMeetings() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token')!;
+    
+    final url = AppConfig.getUserAttendedEvents;
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (!mounted) return;
+
+    if (response.statusCode == 200) {
+      final List jsonList = jsonDecode(response.body);
+      print(jsonDecode(response.body));
+      final meetings = jsonList.map((e) => Meeting.fromJson(e)).toList();
+
+      setState(() {
+        allMeetings = meetings;
+        daysWithMeetings = extractMeetingDays(meetings);
+      });
+
+      print("Meetings fetched: ${allMeetings.length}");
+    } else {
+      print("FAILED fetching meetings: ${response.body}");
+    }
   }
 
   @override
@@ -195,7 +250,7 @@ class _CustomCalendarState extends State<CustomCalendar>{
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: AppColors.background,
                         ),
                       ),
                       Spacer(),
@@ -268,30 +323,49 @@ class _CustomCalendarState extends State<CustomCalendar>{
                               selectedDay = day;
                               selectedDayTrainings = trainingsForDay(day);
                               selectedRoutes = routesForDay(day);
+                              selectedMeetings = meetingsForDay(day);
                             })
                           },
-                          child: Container(
-                            margin: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: isToday(day) ? AppColors.secondary : (isHighlighted ? AppColors.accent : AppColors.current),
-                              borderRadius: BorderRadius.circular(6),
-                              border: hasTraining ? Border.all(
-                                color: ((DateTime(chosen.year, chosen.month, day)).isBefore(today) && isHighlighted) ? 
-                                      AppColors.text : AppColors.background, 
-                                width: 2.0,        
-                                style: BorderStyle.solid, 
-                              ) : null,
-                            ),
-                            child: Center(
-                              child: Text(
-                                "$day",
-                                style: TextStyle(
-                                  color: isToday(day) ? AppColors.current : (isHighlighted ? AppColors.text : AppColors.background),
-                                  fontWeight: FontWeight.bold,
+                          child: Stack(
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: isToday(day) ? AppColors.secondary : (isHighlighted ? AppColors.accent : AppColors.current),
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: hasTraining ? Border.all(
+                                    color: ((DateTime(chosen.year, chosen.month, day)).isBefore(today) && isHighlighted) ? 
+                                          AppColors.text : AppColors.background, 
+                                    width: 2.0,        
+                                    style: BorderStyle.solid, 
+                                  ) : null,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "$day",
+                                    style: TextStyle(
+                                      color: isToday(day) ? AppColors.current : (isHighlighted ? AppColors.text : AppColors.background),
+                                      fontWeight: FontWeight.bold,
+                                      ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          )
+                              if (daysWithMeetings.contains(day)) ...[
+                                Positioned(
+                                  right: 10,
+                                  bottom: 10,
+                                  child: Container(
+                                    width: 5,
+                                    height: 5,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      color: Colors.deepPurple,
+                                    ),
+                                  )
+                                ),
+                              ]
+                            ],
+                          ),
                         );
                       },
                     ),
@@ -325,7 +399,58 @@ class _CustomCalendarState extends State<CustomCalendar>{
                   ),
                   const SizedBox(height: 8),
 
+                if (daysWithMeetings.contains(selectedDay))  ...[
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsetsGeometry.fromLTRB(25, 0, 0, 0),
+                      child: Text(
+                        lang.t('upcomingMeetings'),
+                        style: TextStyle(
+                          color: AppColors.text,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    )
+                  ),
                   
+                  const SizedBox(height: 8),
+                    
+                  ...selectedMeetings.map((t) => GestureDetector(
+                    onTap: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MeetingWidget(
+                            selectedMeeting: t,
+                            onBack: () => Navigator.of(context).pop(), 
+                            onMeetingUpdated: (updatedMeeting) {
+                              setState(() {});
+                            },
+                            onRefresh: () => setState((){}),
+                          ),
+                        ),
+                      );
+
+                      if (result == true) {
+                        await widget.onRefresh?.call();
+                      }
+                    },
+                    child: Container(
+                          width: MediaQuery.of(context).size.width * 0.75,
+                          margin: const EdgeInsets.only(bottom: 8),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: AppColors.current,
+                          ),
+                          child: Text(
+                            t.name,
+                            style: const TextStyle(color: AppColors.background),
+                          ),
+                        ),
+                  ),
+                  ),
+                ],
 
                 if ((DateTime(chosen.year, chosen.month, selectedDay!)).isBefore(today)) ...[
                   Align(
@@ -562,7 +687,7 @@ class _CustomCalendarState extends State<CustomCalendar>{
                     ),
                   )
                   ),
-                  ),
+                ),
 
                 Center(
                   child: SizedBox(

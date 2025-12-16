@@ -24,6 +24,7 @@ class AppConfig {
   static const String addTrainingPlan = '$trainingPlans/add';
   static const String markCompletedTrainingPlan = '$trainingPlans/mark';
   static const String updateTrainingPlan = '$trainingPlans/modify';
+  static const String getTrainingPlansForToday = '$trainingPlans/d';
 
   static const String rEndpoint = '$apiBaseUrl/route';
   static const String routeEndpoint = '$rEndpoint/';
@@ -42,6 +43,7 @@ class AppConfig {
   static const String checkOwner = '$eventEndpoint/check';
   static const String checkAttendee = '$checkOwner/at';
   static const String getUserAttendedEvents = '$eventEndpoint/up';
+  static const String getUserAttendedEventsForToday = '$eventEndpoint/d';
 
   static const String locationEndpoint = '$apiBaseUrl/locations';
   static const String addLocation = '$locationEndpoint/add';

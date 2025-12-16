@@ -18,6 +18,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = context.watch<AppLanguage>();
+    
     return MaterialApp(
       title: 'Rolly',
       theme: ThemeData(

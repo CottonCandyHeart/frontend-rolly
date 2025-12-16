@@ -218,10 +218,46 @@ const Map<String, String> eng = {
   'organizer': 'Organizer',
 
   'noMeetingsAttended': 'No Meetings Attended',
-  
+  'upcomingMeetings': 'Upcoming Meetings',
+  'noMeetings': 'No Upcoming Meetings',
+
+  'upcoming': 'Upcoming',
+  'upcomingTrainings': 'Upcoming Trainings',
 
   // COOUNTRIES
   'PL': 'Poland',
+
+  // MOTIVATIONAL QUOTES
+  'mot1': "Progress, not perfection.",
+  'mot2': "You're doing better than you think.",
+  'mot3': "Small progress is still progress.",
+  'mot4': "Your future self is rooting for you.",
+  'mot5': "You don't need to rush. Just don't stop.",
+  'mot6': "Trust the process.",
+  'mot7': "Every rep counts. Every effort matters.",
+  'mot8': "Discipline is self-care in disguise.",
+  'mot9': "Fall in love with becoming better.",
+  'mot10': "Strong habits > strong motivation.",
+  'mot11': "Start where you are. Use what you have.",
+  'mot12': "Not perfect, just better than yesterday.",
+  'mot13': "You're closer than you were last week.",
+  'mot14': "Keep going — future you will thank you.",
+  'mot15': "You don't need permission to improve your life.",
+  'mot16': "Energy flows where attention goes.",
+  'mot17': "One good choice can change the whole day.",
+  'mot18': "You're allowed to be a work in progress.",
+  'mot19': "Momentum starts with one action.",
+  'mot20': "You are stronger than your excuses.",
+  'mot21': "Today's effort is tomorrow's confidence.",
+  'mot22': "Tiny wins add up fast.",
+  'mot23': "Your journey doesn't have to look like anyone else's.",
+  'mot24': "Do it for the version of you you're becoming.",
+  'mot25': "You're not behind. You're on your own timeline.",
+  'mot26': "Strong mind. Soft heart. Steady habits.",
+  'mot27': "Be proud of yourself for showing up.",
+  'mot28': "Keep choosing yourself.",
+  'mot29': "Show up for yourself — even on the low-energy days.",
+  'mot30': "You're allowed to grow at your own pace.",
 
   // ERROR
   'wrongLoginOrPassword': 'Incorrect login or password',
@@ -272,4 +308,6 @@ const Map<String, String> eng = {
   'Location already exists': 'Location Already Exists',
   'Event deleted successfully': 'Event Deleted Successfully',
   'Joined event': 'Event Joined',
+
+  
 };

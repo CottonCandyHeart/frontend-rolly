@@ -3,15 +3,8 @@ import 'package:frontend_rolly/theme/colors.dart';
 import 'package:provider/provider.dart';
 import '../lang/app_language.dart';
 
-class LanguageWidget extends StatefulWidget {
+class LanguageWidget extends StatelessWidget {
   const LanguageWidget({super.key});
-
-  @override
-  State<LanguageWidget> createState() => _LanguageWidgetState();
-}
-
-class _LanguageWidgetState extends State<LanguageWidget> {
-  String selectedCode = "eng";
 
   @override
   Widget build(BuildContext context) {
@@ -55,27 +48,22 @@ class _LanguageWidgetState extends State<LanguageWidget> {
     required String label,
     required AppLanguage lang,
   }) {
-    final bool isSelected = selectedCode == code;
+    final bool isSelected = lang.currentCode == code;
 
     return GestureDetector(
-      onTap: () {
-        setState(() => selectedCode = code);
-        lang.changeLanguage(code);
-      },
+      onTap: () => lang.changeLanguage(code),
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: const BoxDecoration(
-          color: AppColors.accent, 
+          color: AppColors.accent,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              label,
+            Text(label,
               style: const TextStyle(fontSize: 16, color: AppColors.text),
             ),
-
             if (isSelected)
               Container(
                 padding: const EdgeInsets.all(3),

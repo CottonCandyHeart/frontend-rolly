@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend_rolly/config.dart';
+import 'package:frontend_rolly/lang/app_language.dart';
 import 'package:frontend_rolly/screens/settings_screen.dart';
+import 'package:provider/provider.dart';
 import '../theme/colors.dart';
 import 'home_screen.dart';
 import 'education_screen.dart';
@@ -24,9 +26,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = context.watch<AppLanguage>();
 
     final List<Widget> widgetOptions = <Widget>[
-      HomeScreen(),
+      HomeScreen(onPicked: (pageNo){ setState(() {
+        _currentIndex=pageNo;
+      });}),
       EducationScreen(),
       TrainingScreen(),
       MeetingScreen(),

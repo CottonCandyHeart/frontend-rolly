@@ -6,7 +6,12 @@ import 'lang/fr.dart';
 class AppLanguage extends ChangeNotifier {
   Map<String, String> _localizedStrings = eng;
 
+  String _currentCode = 'eng';
+  String get currentCode => _currentCode;
+
   void changeLanguage(String code) {
+    _currentCode = code;
+    
     switch (code) {
       case 'pl':
         _localizedStrings = pl;
