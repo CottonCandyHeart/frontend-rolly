@@ -129,15 +129,15 @@ class _HomeScreenState extends State<HomeScreen> {
           Center(
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(50)),
                 gradient: RadialGradient(
                   center: Alignment.center,
                   radius: 1.0,
-                  colors: [
-                    Colors.white,       
-                    AppColors.background,   
+                  colors: [ 
+                    AppColors.accent,
+                    AppColors.background, 
+                    AppColors.accent,       
                   ],
-                  stops: [0.2, 1.0],
+                  stops: [0.2, 0.7, 1.0],
                 ),
               ),
               padding: const EdgeInsets.all(20),
@@ -177,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Align(
                         alignment: Alignment.centerLeft,
                         child: Column(
-                          children: allMeetings.map((t) => Container(
+                          children: allMeetings.isNotEmpty ? allMeetings.map((t) => Container(
                             width: MediaQuery.of(context).size.width * 0.75,
                             margin: const EdgeInsets.only(top: 8),
                             padding: const EdgeInsets.all(12),
@@ -198,7 +198,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                 
                               ],
                             ),
-                          )).toList(),
+                          )).toList() : [Container(
+                            width: MediaQuery.of(context).size.width * 0.75,
+                            margin: const EdgeInsets.only(top: 8),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppColors.background,
+                            ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  lang.t('noMeetings'),
+                                  style: const TextStyle(color: AppColors.text),
+                                ),
+                              ],
+                            ),),],
                         ),
                       ),
                     SizedBox(height: 8,), 
@@ -209,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Column(
-                          children: allTrainings.map((t) => Container(
+                          children: allTrainings.isNotEmpty ? allTrainings.map((t) => Container(
                             width: MediaQuery.of(context).size.width * 0.75,
                             margin: const EdgeInsets.only(top: 8),
                             padding: const EdgeInsets.all(12),
@@ -229,7 +243,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ],
                             ),
-                          )).toList(),
+                          )).toList() : [Container(
+                            width: MediaQuery.of(context).size.width * 0.75,
+                            margin: const EdgeInsets.only(top: 8),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppColors.background,
+                            ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  lang.t('noUpcomingTrainings'),
+                                  style: const TextStyle(color: AppColors.text),
+                                ),
+                              ],
+                            ),),],
                         ),
                       ),
                   ],

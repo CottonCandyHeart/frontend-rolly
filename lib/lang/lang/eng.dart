@@ -223,6 +223,7 @@ const Map<String, String> eng = {
 
   'upcoming': 'Upcoming',
   'upcomingTrainings': 'Upcoming Trainings',
+  'noUpcomingTrainings': 'No Upcoming Trainings',
 
   // COOUNTRIES
   'PL': 'Poland',

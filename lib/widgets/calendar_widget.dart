@@ -106,6 +106,17 @@ class _CustomCalendarState extends State<CustomCalendar>{
       ..sort();
   }
 
+  List<int> extractMeetingDaysForMonth(List<Meeting> meetings) {
+    return meetings
+        .where((m) =>
+            m.dateTime.year == widget.chosen.year &&
+            m.dateTime.month == widget.chosen.month)
+        .map((m) => m.dateTime.day)
+        .toSet()
+        .toList()
+      ..sort();
+  }
+
   List<int> extractTrainingDays(List<TrainingPlan> plans) {
     return plans
         .map((t) => t.dateTime.day)
@@ -183,7 +194,7 @@ class _CustomCalendarState extends State<CustomCalendar>{
 
       setState(() {
         allMeetings = meetings;
-        daysWithMeetings = extractMeetingDays(meetings);
+        daysWithMeetings = extractMeetingDaysForMonth(meetings);
       });
 
       print("Meetings fetched: ${allMeetings.length}");
@@ -234,8 +245,10 @@ class _CustomCalendarState extends State<CustomCalendar>{
                                 selectedDay = null;
                                 selectedDayTrainings = [];
                                 selectedRoutes = [];
+                                allMeetings = [];
                               });
                               widget.onPrev();
+                              _fetchAllMeetings();
                             },
                             icon: const Icon(Icons.arrow_back),
                             color: AppColors.background,
@@ -265,8 +278,10 @@ class _CustomCalendarState extends State<CustomCalendar>{
                                 selectedDay = null;
                                 selectedDayTrainings = [];
                                 selectedRoutes = [];
+                                allMeetings = [];
                               });
                               widget.onNext();
+                              _fetchAllMeetings();
                             },
                             icon: const Icon(Icons.arrow_forward),
                             color: AppColors.background,

@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:frontend_rolly/config.dart';
 import 'package:frontend_rolly/lang/app_language.dart';
 import 'package:frontend_rolly/screens/settings_screen.dart';
+import 'package:frontend_rolly/units/app_units.dart';
 import 'package:provider/provider.dart';
 import '../theme/colors.dart';
 import 'home_screen.dart';

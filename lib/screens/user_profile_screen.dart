@@ -1,11 +1,15 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:frontend_rolly/config.dart';
 import 'package:frontend_rolly/lang/app_language.dart';
 import 'package:frontend_rolly/models/measurements.dart';
 import 'package:frontend_rolly/models/user_response.dart';
 import 'package:frontend_rolly/screens/chosen_settings_screen.dart';
 import 'package:frontend_rolly/services/user_service.dart';
 import 'package:frontend_rolly/theme/colors.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,12 +30,55 @@ class _UserProfileState extends State<UserProfileScreen> {
   late TextEditingController _weightController;
   late TextEditingController _heightController;
 
+  final _weightFocus = FocusNode();
+  final _heightFocus = FocusNode();
+
+  bool _initialized = false;
+
   @override
   void initState() {
     super.initState();
     _weightController = TextEditingController();
     _heightController = TextEditingController();
     loadToken();
+
+    _weightFocus.addListener(() {
+      if (!_weightFocus.hasFocus) {
+        updateMeas();
+      }
+    });
+
+    _heightFocus.addListener(() {
+      if (!_heightFocus.hasFocus) {
+        updateMeas();
+      }
+    });
+  }
+
+  Future<void> updateMeas() async {
+    final weight = double.tryParse(_weightController.text);
+    final height = int.tryParse(_heightController.text);
+    if (weight == null || height == null) return;
+
+    Measurements meas = Measurements(weight: weight, height: height);
+    
+    final url = Uri.parse(AppConfig.measurementsEndpoint);
+    final response = await http.post(
+      url,
+      headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json',},
+      body: jsonEncode(meas.toJson())
+    );
+
+    if (!mounted) return;
+
+    if (response.statusCode == 200) {
+      measurements = UserService().getMeasurements(token!);
+      _initialized = false;
+      setState(() {});
+
+    } else {
+      print("FAILED fetching measurements: ${response.body}");
+    }
   }
 
   Future<void> loadToken() async {
@@ -103,7 +150,8 @@ class _UserProfileState extends State<UserProfileScreen> {
                     return Text(lang.t('loadingProfileFailed'), style: TextStyle(color: AppColors.text));
                   }
 
-                  if (snapshot.hasData) {
+                  if (snapshot.hasData && !_initialized) {
+                    _initialized = true;
                     final meas = snapshot.data!;
                     _weightController.text = meas.weight.toString();
                     _heightController.text = meas.height.toString();
@@ -160,6 +208,7 @@ class _UserProfileState extends State<UserProfileScreen> {
                               child: SizedBox(
                                 width: 50,
                                 child: TextField(
+                                  focusNode: _weightFocus,
                                   controller: _weightController,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(color: AppColors.text),
@@ -196,6 +245,7 @@ class _UserProfileState extends State<UserProfileScreen> {
                               child: SizedBox(
                                     width: 50,
                                     child: TextField(
+                                      focusNode: _heightFocus,
                                       controller: _heightController,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(color: AppColors.text),

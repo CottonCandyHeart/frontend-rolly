@@ -13,4 +13,12 @@ class Measurements {
       height: json['height']
     );
   }
+
+  Map<String, dynamic> toJson() {
+
+    return {
+      'weight': weight,
+      'height': height
+    };
+  }
 }
