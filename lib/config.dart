@@ -14,6 +14,13 @@ class AppConfig {
   static const String userResponse = '$userEndpoint/profile';
   static const String measurementsEndpoint = '$userEndpoint/meas';
   static const String changePasswd = '$userEndpoint/change-password';
+  static const String removeUser = '$userEndpoint/remove';
+
+  static const String adminEndpoint = '$apiBaseUrl/admin';
+  static const String chackAdminRole = '$adminEndpoint/isAdmin';
+  static const String getAllUsers = '$adminEndpoint/all';
+  static const String adminAaddlUser = '$adminEndpoint/add';
+  static const String changeRole = '$adminEndpoint/role';
 
   static const String trickEndpoint = '$apiBaseUrl/trick';
   static const String resetTrickEndpoint = '$trickEndpoint/reset';
@@ -34,6 +41,7 @@ class AppConfig {
   static const String notificationEndpoint = '$apiBaseUrl/notification';
   static const String addNotification = '$notificationEndpoint/add';
   static const String removeNotification = '$notificationEndpoint/remove';
+  static const String markAsRead = '$notificationEndpoint/read';
 
   static const String eventEndpoint = '$apiBaseUrl/event';
   static const String getEventByCity = '$eventEndpoint/c';
@@ -50,8 +58,16 @@ class AppConfig {
   static const String getLocations = '$locationEndpoint/';
   static const String getLocationByName = '$locationEndpoint/get';
 
+  static const String roleEndpoint = '$apiBaseUrl/role';
+  static const String getAllRoles = '$roleEndpoint/';
+  static const String addRole = '$roleEndpoint/add';
+
   // img
   static const String logoImg = 'assets/images/logo.svg';
   static const String logoLightImg = 'assets/images/logo-light.svg';
+
+  // keys
+  static const String kTrainingReminder = 'training_reminder_enabled';
+  static final int trainingNotificationId = 'training_reminder'.hashCode;
 
 }

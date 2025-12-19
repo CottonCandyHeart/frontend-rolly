@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:frontend_rolly/screens/admin_home_page.dart';
 import 'package:frontend_rolly/screens/main_home_page.dart';
 import 'package:frontend_rolly/theme/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -50,10 +51,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
         // Przejdź na ekran główny
         if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const MyHomePage(title: AppConfig.appName)),
-          );
+          if(_usernameController.text == "admin"){
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const AdminHomePage(title: AppConfig.appName)),
+            );
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MyHomePage(title: AppConfig.appName)),
+            );
+          }
+          
         }
       }
     } else {

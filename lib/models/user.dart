@@ -1,35 +1,35 @@
-class UserResponse {
+class UserDto {
     final String username;
     final String email;
+    final String passwd;
     final String birthday;  // YY - mm - dd
-    String role;
-    final String level;
+    final String role;
 
-  UserResponse({
+  UserDto({
     required this.username, 
     required this.email, 
+    required this.passwd,
     required this.birthday, 
     required this.role,
-    required this.level 
   });
 
   Map<String, dynamic> toJson() {
     return {
       'username': username,
       'email': email,
+      'passwd': passwd,
       'birthday': birthday,
       'role': role,
-      'level': level
     };
   }
 
-  factory UserResponse.fromJson(Map<String, dynamic> json) {
-    return UserResponse(
+  factory UserDto.fromJson(Map<String, dynamic> json) {
+    return UserDto(
       username: json['username'],
       email: json['email'],
+      passwd: json['passwd'],
       birthday: json['birthday'],
       role: json['role'],
-      level: json['level']
     );
   }
 }

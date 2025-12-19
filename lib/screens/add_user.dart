@@ -1,40 +1,75 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:frontend_rolly/models/user.dart';
+import 'package:frontend_rolly/models/user_response.dart';
+import 'package:frontend_rolly/screens/add_role.dart';
 import 'package:frontend_rolly/screens/admin_home_page.dart';
-import 'package:frontend_rolly/screens/get_measurements_screen.dart';
+import 'package:frontend_rolly/screens/main_home_page.dart';
 import 'package:frontend_rolly/theme/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../config.dart';
 import '../lang/app_language.dart';
 import 'package:provider/provider.dart';
-import 'login_screen.dart';
+import 'register_screen.dart';
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+class AddUserScreen extends StatefulWidget {
+  const AddUserScreen({super.key, required this.onBack});
+
+  final VoidCallback onBack;
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<AddUserScreen> createState() => _AddUserScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _AddUserScreenState extends State<AddUserScreen> {
   final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
-  final TextEditingController _birthDateController = TextEditingController();
-  
-  String? _emailError;
-  String? _passwdMatchError;
-  String? _passwdError;
-  String? _userError;
-  String? _birthDateError;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _birthdayController = TextEditingController();
+
+  late String? _birthdayError = null;
+  late String? _usernameError = null;
+  late String? _passwdError = null;
+  late String? _emailError = null;
+  late String? _roleError = null;
 
   String? _birthdayIso;
+  String? selectedRole;
 
   bool _isLoading = false;
+
+  List<String> _roles = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchRoles();
+  }
+
+  Future<void> _fetchRoles() async{
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token')!;
+    
+    final response = await http.get(
+      Uri.parse(AppConfig.getAllRoles),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+
+      if (!mounted) return;
+      setState(() {
+        _roles = data.map<String>((role) => role['name'] as String).toList();
+      });
+    }
+  }
 
   bool isValidUsername(String username) {
     //min. 3 znaki, litery i cyfry, bez spacji
@@ -59,12 +94,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return regex.hasMatch(password);
   }
 
-  Future<void> _register() async {
+  Future<void> _addUser() async {
+    setState(() => _isLoading = true);
+
     if (!isValidUsername(_usernameController.text)) {
-      setState(() => _userError = context.read<AppLanguage>().t('wrongUsername'));
+      setState(() => _usernameError = context.read<AppLanguage>().t('wrongUsername'));
       return;
     } else {
-        setState(() => _userError = null);
+        setState(() => _usernameError = null);
     }
 
     if (!isValidEmail(_emailController.text)) {
@@ -74,13 +111,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         setState(() => _emailError = null);
     }
 
-    if (_passwordController.text != _confirmPasswordController.text) {
-      setState(() => _passwdMatchError = context.read<AppLanguage>().t('differentPasswd'));
-      return;
-    } else {
-        setState(() => _passwdMatchError = null);
-    }
-
     if (!isValidPassword(_passwordController.text)) {
       setState(() => _passwdError = context.read<AppLanguage>().t('wrongPasswd'));
       return;
@@ -88,88 +118,60 @@ class _RegisterScreenState extends State<RegisterScreen> {
         setState(() => _passwdError = null);
     }
 
-    if (_birthDateController.text.isEmpty) {
-      setState(() => _birthDateError = context.read<AppLanguage>().t('birthdayRequired'));
+    if (_birthdayController.text.isEmpty) {
+      setState(() => _birthdayError = context.read<AppLanguage>().t('birthdayRequired'));
       return;
     } else {
-      setState(() => _birthDateError = null);
+      setState(() => _birthdayError = null);
     }
 
-    setState(() => _isLoading = true);
-
-  final url = Uri.parse(AppConfig.registerEndpoint); 
-  final response = await http.post(
-    url,
-    headers: {'Content-Type': 'application/json'},
-    body: json.encode({
-      'username': _usernameController.text,
-      'email': _emailController.text,
-      'passwd': _passwordController.text,
-      'birthday': _birthdayIso,
-      'role': 'user'
-    }),
-  );
-
-  if (response.statusCode == 200) {
-    // automatyczne logowanie po rejestracji
-    final loginUrl = Uri.parse(AppConfig.loginEndpoint);
-    final loginResponse = await http.post(
-      loginUrl,
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'username': _usernameController.text,
-        'passwd': _passwordController.text,
-      }),
+    UserDto u = UserDto(
+      username: _usernameController.text, 
+      email: _passwordController.text, 
+      passwd: _passwordController.text,
+      birthday: _birthdayIso!, 
+      role: selectedRole!,
     );
+    
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token');
 
-    print('Login response status: ${loginResponse.statusCode}');
-    print('Login response body: ${loginResponse.body}');
+    final url = Uri.parse(AppConfig.adminAaddlUser); 
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
+      body: json.encode(u.toJson()),
+    );
 
     setState(() => _isLoading = false);
 
-    if (loginResponse.statusCode == 200) {
-      final data = json.decode(loginResponse.body);
-      final token = data['token'];
+    if (response.statusCode == 200) {
 
-      if (token != null) {
-        // zapisz token lokalnie
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('jwt_token', token);
-
-        // przejdź do ekranu wymiarów z tokenem
+        // Przejdź na ekran główny
         if (mounted) {
-          if(_usernameController.text == "admin") {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AdminHomePage(title: AppConfig.appName),
-              ),
-            );
-          } else {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => GetMeasurementsScreen(),
-              ),
-            );
-          }
-          
+          final message = response.body;
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(context.read<AppLanguage>().t('$message'))),
+          );
+
+          widget.onBack();
+          Navigator.pop(context);
         }
-      }
     } else {
-      // obsługa błędu logowania
+      // Obsługa błędów
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.read<AppLanguage>().t('loginFailed'))),
+        SnackBar(content: Text(context.read<AppLanguage>().t('actionFailed'))),
       );
     }
-  } else {
-    setState(() => _isLoading = false);
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.read<AppLanguage>().t('userExists'))),
-    );
   }
+
+  Future<void> _addRole() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddRole(onBack: (){}, onRefresh: () async { await _fetchRoles(); },)),
+    );
   }
 
   @override
@@ -177,6 +179,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final lang = Provider.of<AppLanguage>(context);
 
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            color: AppColors.text,
+            onPressed: () {
+              widget.onBack();
+              Navigator.pop(context);
+            },
+          ),
+        title: Text(lang.t('addUser'), style: TextStyle(color: AppColors.text)),
+        
+      ),
       backgroundColor: AppColors.background,
       body: Center(
         child: SingleChildScrollView(
@@ -184,40 +198,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo zamiast kółka
-              SvgPicture.asset(
-                AppConfig.logoImg,
-                height: 80,
-              ),
-              const SizedBox(height: 16),
-
-              Text(
-                'Rolly',
-                style: GoogleFonts.dancingScript(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 20,
-                    ),
-              ),
               const SizedBox(height: 32),
 
+              // Pole użytkownika
               Text(
-                lang.t('createNewAccount'),
+                lang.t('username'),
                 style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
                   color: AppColors.text,
+                  fontSize: 24,
                 ),
               ),
-              const SizedBox(height: 24),
-
-              // Pole użytkownika
+              const SizedBox(height: 16),
               TextField(
                 controller: _usernameController,
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
-                  errorText: _userError,
-                  errorMaxLines: 3,
+                  errorText: _usernameError,
                   hintText: lang.t('username'),
                   hintStyle: TextStyle(
                     color: AppColors.text,
@@ -231,38 +227,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
 
-              // Pole email
-              TextField(
-                controller: _emailController,
-                textAlign: TextAlign.center,
-                decoration: InputDecoration(
-                  errorText: _emailError,
-                  errorMaxLines: 3,
-                  hintText: lang.t('email'),
-                  hintStyle: TextStyle(
-                    color: AppColors.text,
-                  ),
-                  filled: true,
-                  fillColor: AppColors.accent,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(25),
-                    borderSide: BorderSide.none,
-                  ),
+              // Pole hasła
+              Text(
+                lang.t('password'),
+                style: TextStyle(
+                  color: AppColors.text,
+                  fontSize: 24,
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Pole hasła
               TextField(
                 controller: _passwordController,
-                obscureText: true,
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
                   errorText: _passwdError,
-                  errorMaxLines: 3,
                   hintText: lang.t('password'),
                   hintStyle: TextStyle(
                     color: AppColors.text,
@@ -276,17 +256,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
 
-              // Powtórz hasło
+              // Pole email
+              Text(
+                lang.t('email'),
+                style: TextStyle(
+                  color: AppColors.text,
+                  fontSize: 24,
+                ),
+              ),
+              const SizedBox(height: 16),
               TextField(
-                controller: _confirmPasswordController,
-                obscureText: true,
+                controller: _emailController,
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
-                  errorText: _passwdMatchError,
-                  errorMaxLines: 3,
-                  hintText: lang.t('confPasswd'),
+                  errorText: _emailError,
+                  hintText: lang.t('email'),
                   hintStyle: TextStyle(
                     color: AppColors.text,
                   ),
@@ -299,18 +285,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
 
-              // Urodziny
+              // Pole birthday
+              Text(
+                lang.t('birthday'),
+                style: TextStyle(
+                  color: AppColors.text,
+                  fontSize: 24,
+                ),
+              ),
+              const SizedBox(height: 16),
               Stack(
                 alignment: Alignment.center,
                 children: [
                   TextField(
-                    controller: _birthDateController,
+                    controller: _birthdayController,
                     readOnly: true,
                     textAlign: TextAlign.center,
                     decoration: InputDecoration(
-                      errorText: _birthDateError,
+                      errorText: _birthdayError,
                       errorMaxLines: 3,
                       hintText: lang.t('birthday'),
                       hintStyle: TextStyle(
@@ -345,7 +339,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       );
                       if (picked != null) {
                           setState(() {
-                            _birthDateController.text = 
+                            _birthdayController.text = 
                               "${picked.day.toString().padLeft(2,'0')}.${picked.month.toString().padLeft(2,'0')}.${picked.year}";
                             _birthdayIso =
                               "${picked.year}-${picked.month.toString().padLeft(2,'0')}-${picked.day.toString().padLeft(2,'0')}";
@@ -369,7 +363,76 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Przycisk rejestracji
+              // Pole role
+              Text(
+                lang.t('role'),
+                style: TextStyle(
+                  color: AppColors.text,
+                  fontSize: 24,
+                ),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                    value: selectedRole,
+                    decoration: InputDecoration(
+                      labelText: lang.t('role'),
+                      filled: true,
+                      fillColor: AppColors.accent,
+                      errorText: _roleError,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                    items: _roles.map((style) {
+                      return DropdownMenuItem(
+                        value: style,
+                        child: Text(style),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedRole = value;
+                        _roleError = null;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    lang.t('or'),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.text,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  // Przycisk dodawania
+                  SizedBox(
+                    width: double.infinity,
+                     child: _isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                         : ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            onPressed: _addRole,
+                            child: Text(
+                              lang.t('addNewRole'),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: AppColors.background,
+                              ),
+                            ),
+                          ),
+                    ),
+              const SizedBox(height: 48),
+
+              // Przycisk logowania
               SizedBox(
                 width: double.infinity,
                 child: _isLoading
@@ -382,9 +445,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
-                        onPressed: _register,
+                        onPressed: _addUser,
                         child: Text(
-                          lang.t('signup'),
+                          lang.t('addUser'),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -394,23 +457,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
               ),
               const SizedBox(height: 24),
-
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  );
-                },
-                child: Text(
-                  lang.t('goToLogin'),
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.text,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
             ],
           ),
         ),
@@ -418,4 +464,3 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
-  

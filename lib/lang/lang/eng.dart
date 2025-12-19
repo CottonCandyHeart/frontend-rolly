@@ -25,6 +25,7 @@ const Map<String, String> eng = {
   'mastered': 'Mastered',
   'notMastered': 'Master',
   'delete': 'Delete',
+  'cancel': 'Cancel',
 
   // USER DATA
   'username': 'Username',
@@ -35,6 +36,7 @@ const Map<String, String> eng = {
   'weight': 'Weight',
   'height': 'Height',
   'level': 'Level',
+  'role': 'Role',
 
   // SETTINGS
   'settings': 'Settings',
@@ -260,6 +262,18 @@ const Map<String, String> eng = {
   'mot29': "Show up for yourself — even on the low-energy days.",
   'mot30': "You're allowed to grow at your own pace.",
 
+  // ADMIN SCREEN
+  'adminManageUsers': 'Manage Users',
+  'adminManageMeetings': 'Manage Meetings',
+  'aminAddCategory': 'Add Category',
+  'adminAddTrick': 'Add Trick',
+  'searchUser': 'Search User',
+  'addUser': 'Add User',
+  'addNewRole': 'Add New Role',
+  'roleName': 'Role Name',
+  'confirmDeleteTitle': 'Delete User',
+  'confirmDeleteMessage': 'Are you sure you want to delete user ',
+
   // ERROR
   'wrongLoginOrPassword': 'Incorrect login or password',
   'differentPasswd': 'Password does not match',
@@ -309,6 +323,13 @@ const Map<String, String> eng = {
   'Location already exists': 'Location Already Exists',
   'Event deleted successfully': 'Event Deleted Successfully',
   'Joined event': 'Event Joined',
-
-  
+  'Illegal role': 'Illegal User Role',
+  'User does not exist': 'User Does Not Exist',
+  'User removed': 'User Removed',
+  'User added': 'User Added',
+  'Failed adding user': 'Failed Adding User',
+  'Role added': 'Role Added',
+  'Failed adding role': 'Failed adding role',
+  'Role updated': 'Role Updated',
+  'Failed updating role': 'Failed Updating Role',
 };
