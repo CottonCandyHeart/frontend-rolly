@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend_rolly/config.dart';
 import 'package:frontend_rolly/lang/app_language.dart';
+import 'package:frontend_rolly/screens/admin_manage_meetings.dart';
 import 'package:frontend_rolly/screens/admin_manage_users.dart';
 import 'package:frontend_rolly/screens/settings_screen.dart';
 import 'package:frontend_rolly/units/app_units.dart';
@@ -37,7 +38,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
     }
     
     if (selected == 'manageMeetings') {
-      return AdminManageUsers(
+      return AdminManageMeetings(
         onBack: () => setState(() => selected = null),
         onRefresh: () => setState((){}),
       );

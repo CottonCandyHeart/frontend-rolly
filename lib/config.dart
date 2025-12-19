@@ -21,6 +21,7 @@ class AppConfig {
   static const String getAllUsers = '$adminEndpoint/all';
   static const String adminAaddlUser = '$adminEndpoint/add';
   static const String changeRole = '$adminEndpoint/role';
+  static const String adminDeleteEvent = '$adminEndpoint/del/event';
 
   static const String trickEndpoint = '$apiBaseUrl/trick';
   static const String resetTrickEndpoint = '$trickEndpoint/reset';
@@ -52,6 +53,7 @@ class AppConfig {
   static const String checkAttendee = '$checkOwner/at';
   static const String getUserAttendedEvents = '$eventEndpoint/up';
   static const String getUserAttendedEventsForToday = '$eventEndpoint/d';
+  static const String getAllEvents = '$eventEndpoint/get/all';
 
   static const String locationEndpoint = '$apiBaseUrl/locations';
   static const String addLocation = '$locationEndpoint/add';

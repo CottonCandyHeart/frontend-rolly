@@ -265,14 +265,15 @@ const Map<String, String> eng = {
   // ADMIN SCREEN
   'adminManageUsers': 'Manage Users',
   'adminManageMeetings': 'Manage Meetings',
-  'aminAddCategory': 'Add Category',
-  'adminAddTrick': 'Add Trick',
+  'aminAddCategory': 'Manage Categories',
+  'adminAddTrick': 'Manage Tricks',
   'searchUser': 'Search User',
   'addUser': 'Add User',
   'addNewRole': 'Add New Role',
   'roleName': 'Role Name',
-  'confirmDeleteTitle': 'Delete User',
-  'confirmDeleteMessage': 'Are you sure you want to delete user ',
+  'confirmDeleteTitle': 'Confirm Delete',
+  'confirmDeleteMessage': 'Are you sure you want to delete:',
+  'searchMeeting': 'Search Meeting',
 
   // ERROR
   'wrongLoginOrPassword': 'Incorrect login or password',
