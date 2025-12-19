@@ -27,6 +27,8 @@ class AppConfig {
   static const String resetTrickEndpoint = '$trickEndpoint/reset';
   static const String getCategoryEndpoint = '$trickEndpoint/categories';
   static const String trickByCategoryEndpoint = '$trickEndpoint/by-cat';
+  static const String deleteCategory = '$trickEndpoint/del-category';
+  static const String addCategory = '$trickEndpoint/add-category';
 
   static const String trainingPlans = '$apiBaseUrl/training';
   static const String addTrainingPlan = '$trainingPlans/add';

@@ -274,6 +274,9 @@ const Map<String, String> eng = {
   'confirmDeleteTitle': 'Confirm Delete',
   'confirmDeleteMessage': 'Are you sure you want to delete:',
   'searchMeeting': 'Search Meeting',
+  'searchCategory': 'Search Category',
+  'addCategory': 'Add Category',
+  'categoryName': 'Category Name',
 
   // ERROR
   'wrongLoginOrPassword': 'Incorrect login or password',

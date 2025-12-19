@@ -3,29 +3,25 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend_rolly/config.dart';
 import 'package:frontend_rolly/lang/app_language.dart';
-import 'package:frontend_rolly/models/role.dart';
 import 'package:frontend_rolly/theme/colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AddRole extends StatefulWidget{
+class AddCategoryScreen extends StatefulWidget{
   final VoidCallback onBack;
-  final Future<void> Function()? onRefresh;
 
-  const AddRole({
+  const AddCategoryScreen({
     super.key,
     required this.onBack,
-    required this.onRefresh,
   });
 
   @override
-  State<StatefulWidget> createState() => _AddRoleState();
+  State<StatefulWidget> createState() => _AddCategoryScreenState();
 }
 
-class _AddRoleState extends State<AddRole> {
+class _AddCategoryScreenState extends State<AddCategoryScreen> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
 
   String? _nameError;
 
@@ -36,16 +32,10 @@ class _AddRoleState extends State<AddRole> {
     super.initState();
   }
 
-  Future<void> _addRole() async {
+  Future<void> _addCategory() async {
     final prefs = await SharedPreferences.getInstance(); 
       final token = prefs.getString('jwt_token')!; 
-      final url = AppConfig.addRole; 
-
-      final role = Role(
-        id: 0,
-        name: _nameController.text.trim(), 
-        description: _descriptionController.text.trim(), 
-      );
+      final url = AppConfig.addCategory; 
       
       final response = await http.post( 
         Uri.parse(url), 
@@ -53,14 +43,16 @@ class _AddRoleState extends State<AddRole> {
           'Authorization': 'Bearer $token', 
           'Content-Type': 'application/json',
         }, 
-        body: jsonEncode(role.toJson()),
+        body: jsonEncode({
+          'id': 0,
+          'name': _nameController.text.trim(),
+        }),
       );
       
       setState(() => _isLoading = false);
 
     if (response.statusCode == 200) {
       final message = response.body;
-      widget.onRefresh?.call();
 
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(context.read<AppLanguage>().t('$message'))),
@@ -68,7 +60,7 @@ class _AddRoleState extends State<AddRole> {
 
       if (mounted) {
         _nameController.clear();
-        _descriptionController.clear();
+        widget.onBack();
         Navigator.pop(context, true);
       }
     } else {
@@ -99,7 +91,7 @@ class _AddRoleState extends State<AddRole> {
               Navigator.pop(context);
             },
           ),
-          title: Text(lang.t('addNewRole'), style: TextStyle(color: AppColors.text)),
+          title: Text(lang.t('addCategory'), style: TextStyle(color: AppColors.text)),
         ),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -113,7 +105,7 @@ class _AddRoleState extends State<AddRole> {
 
                   // Nazwa
                   Text(
-                        lang.t('roleName'),
+                        lang.t('categoryName'),
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -142,27 +134,6 @@ class _AddRoleState extends State<AddRole> {
                   ),
                   const SizedBox(height: 36),
 
-                  // Opis
-                  Text(
-                    lang.t('description'),
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.text,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    maxLines: null, 
-                    minLines: 5,
-                    controller: _descriptionController,
-                    keyboardType: TextInputType.multiline,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 36),
-
                   // Przycisk dodawania
                   const SizedBox(height: 20),
                   SizedBox(
@@ -177,9 +148,9 @@ class _AddRoleState extends State<AddRole> {
                                   ),
                                   padding: const EdgeInsets.symmetric(vertical: 16),
                                 ),
-                                onPressed: _addRole,
+                                onPressed: _addCategory,
                                 child: Text(
-                                  lang.t('addNewRole'),
+                                  lang.t('addCategory'),
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,

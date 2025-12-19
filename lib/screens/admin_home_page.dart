@@ -2,17 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend_rolly/config.dart';
 import 'package:frontend_rolly/lang/app_language.dart';
+import 'package:frontend_rolly/screens/admin_manage_categories.dart';
 import 'package:frontend_rolly/screens/admin_manage_meetings.dart';
 import 'package:frontend_rolly/screens/admin_manage_users.dart';
 import 'package:frontend_rolly/screens/settings_screen.dart';
-import 'package:frontend_rolly/units/app_units.dart';
 import 'package:provider/provider.dart';
 import '../theme/colors.dart';
-import 'home_screen.dart';
-import 'education_screen.dart';
-import 'training_screen.dart';
-import 'meeting_screen.dart';
-import '../widgets/custom_bottom_nav_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AdminHomePage extends StatefulWidget {
@@ -45,7 +40,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
     }
     
     if (selected == 'addCategory') {
-      return AdminManageUsers(
+      return AdminManageCategories(
         onBack: () => setState(() => selected = null),
         onRefresh: () => setState((){}),
       );
