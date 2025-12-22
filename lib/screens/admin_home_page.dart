@@ -4,6 +4,7 @@ import 'package:frontend_rolly/config.dart';
 import 'package:frontend_rolly/lang/app_language.dart';
 import 'package:frontend_rolly/screens/admin_manage_categories.dart';
 import 'package:frontend_rolly/screens/admin_manage_meetings.dart';
+import 'package:frontend_rolly/screens/admin_manage_trick.dart';
 import 'package:frontend_rolly/screens/admin_manage_users.dart';
 import 'package:frontend_rolly/screens/settings_screen.dart';
 import 'package:provider/provider.dart';
@@ -47,7 +48,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
     } 
 
     if (selected == 'addTrick') {
-      return AdminManageUsers(
+      return AdminManageTricks(
         onBack: () => setState(() => selected = null),
         onRefresh: () => setState((){}),
       );

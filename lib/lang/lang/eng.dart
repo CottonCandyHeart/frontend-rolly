@@ -277,6 +277,17 @@ const Map<String, String> eng = {
   'searchCategory': 'Search Category',
   'addCategory': 'Add Category',
   'categoryName': 'Category Name',
+  'searchTrick': 'Search Trick',
+  'addTrick': 'Add Trick',
+  'trickName': 'Trick Name',
+  'chooseCategory': 'Choose Category',
+  'chooseLeg': 'Choose Leg',
+  'trickLink': 'Link to Video Clip',
+  'link': 'Link',
+  'right': 'Right',
+  'left': 'Left',
+  'category': 'Category',
+  'leg': 'Leg',
 
   // ERROR
   'wrongLoginOrPassword': 'Incorrect login or password',
@@ -336,4 +347,6 @@ const Map<String, String> eng = {
   'Failed adding role': 'Failed adding role',
   'Role updated': 'Role Updated',
   'Failed updating role': 'Failed Updating Role',
+  'Deleted trick': 'Delete Trick',
+  'Failed deleting trick': 'Failed Deleting Trick',
 };

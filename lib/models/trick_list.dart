@@ -25,4 +25,15 @@ class TrickList {
       isMastered: json['mastered']
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'categoryName': categoryName,
+      'trickName': trickName,
+      'link': link,
+      'leg': leg,
+      'description': description,
+      'isMastered': isMastered,
+    };
+  }
 }
