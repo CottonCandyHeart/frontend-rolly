@@ -28,10 +28,61 @@ class _AdminManageTricksState extends State<AdminManageTricks> {
 
   String _query = '';
   List<TrickList> _filteredTricks = [];
+
+  List<String> _categories = [];
+
   @override
   void initState() {
     super.initState();
     getTricks();
+    _fetchCategories();
+  }
+
+  Future<void> _fetchCategories() async{
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token')!;
+    
+    final response = await http.get(
+      Uri.parse(AppConfig.getCategoryEndpoint),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+
+      if (!mounted) return;
+      setState(() {
+        _categories = data.map<String>((category) => category['name'] as String).toList();
+      });
+    }
+  }
+
+  Future<void> _saveCategory(TrickList trick) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token');
+
+
+    final response = await http.post(
+      Uri.parse(AppConfig.adminChangeCategory),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(trick.toJson()),
+    );
+
+    if (response.statusCode != 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Action Failed')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Category Saved')),
+      );
+    }
   }
 
   Future<void> getTricks() async{
@@ -234,6 +285,50 @@ class _AdminManageTricksState extends State<AdminManageTricks> {
                           )
                         ],
                       ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              lang.t('category'),
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: AppColors.text,
+                              ),
+                            ),
+                          ),
+                          Spacer(),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            child: DropdownButtonFormField<String>(
+                              value: t.categoryName,
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                filled: true,
+                                fillColor: AppColors.secondary,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                              ),
+                              items: _categories.map((style) {
+                                return DropdownMenuItem(
+                                  value: style,
+                                  child: Text(style, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 14,)),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                if (value == null) return;
+
+                                setState(() {
+                                  t.categoryName = value;
+                                });
+
+                                _saveCategory(t);
+                              },
+                            ),
+                          ),
+                        ],
+                      )
                     ],)
                   ),
                   ),

@@ -11,8 +11,8 @@ class RoutePoint {
   factory RoutePoint.fromJson(Map<String, dynamic> json) {
     return RoutePoint(
       id: json['id'],
-      latitude: json['latitude'],
-      longitude: json['longitude'],
+      latitude: (json['latitude'] as num).toDouble(),
+      longitude: (json['longitude'] as num).toDouble(),
       timestamp: DateTime.parse(json['timestamp']),
     );
   }
@@ -22,7 +22,7 @@ class RoutePoint {
       'id': id,
       'latitude': latitude,
       'longitude': longitude,
-      'timestamp': timestamp,
+      'timestamp': timestamp.toIso8601String(),
     };
   }
 }

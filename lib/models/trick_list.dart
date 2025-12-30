@@ -1,5 +1,5 @@
 class TrickList {
-  final String categoryName;
+  String categoryName;
   final String trickName;
   final String link;
   final String leg;

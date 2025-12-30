@@ -189,7 +189,6 @@ class _AddUserScreenState extends State<AddUserScreen> {
             },
           ),
         title: Text(lang.t('addUser'), style: TextStyle(color: AppColors.text)),
-        
       ),
       backgroundColor: AppColors.background,
       body: Center(

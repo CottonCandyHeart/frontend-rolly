@@ -130,7 +130,7 @@ class _AddTrickScreenState extends State<AddTrickScreen> {
   Widget build(BuildContext context) {
     final lang = Provider.of<AppLanguage>(context);
 
-    List<String> _legs = [lang.t('right'), lang.t('left')];
+    List<String> _legs = [lang.t('right'), lang.t('left'), lang.t('other')];
 
     return PopScope(
       canPop: true,

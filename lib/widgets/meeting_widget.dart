@@ -459,12 +459,16 @@ class _MeetingWidgetState  extends State<MeetingWidget> {
                               color: AppColors.text,
                             ),
                           ),
-                          Text(
-                            '${location!.city.isNotEmpty ? '${lang.t(location!.city)}, ' : ''}${lang.t(location!.country)}',
-                            style: TextStyle(
-                              color: AppColors.text,
-                            ),
-                          ),
+                           Text(
+                              '${location!.city.isNotEmpty ? '${lang.t(location!.city)}, ' : ''}${lang.t(location!.country)}',
+                              
+                              style: TextStyle(
+                                color: AppColors.text,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                          )
+                          
                         ],
                       ),
                       

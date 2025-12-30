@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend_rolly/theme/colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../config.dart';
@@ -89,16 +90,18 @@ class _GetMeasurementsState extends State<GetMeasurementsScreen> {
 
               Text(
                 lang.t('appName'),
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
+                style: GoogleFonts.dancingScript(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 30,
                 ),
+
               ),
               const SizedBox(height: 32),
 
               Text(
                 lang.t('shareMeasurements'),
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w700,

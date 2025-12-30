@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend_rolly/config.dart';
 import 'package:frontend_rolly/lang/app_language.dart';
+import 'package:frontend_rolly/models/category_progress.dart';
 import 'package:frontend_rolly/models/meeting.dart';
 import 'package:frontend_rolly/models/training_plan.dart';
+import 'package:frontend_rolly/models/user_progress.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -27,11 +29,17 @@ class _HomeScreenState extends State<HomeScreen> {
   List<TrainingPlan> allTrainings = [];
   List<Meeting> allMeetings = [];
 
+  List<CategoryProgress> categories = [];
+  UserProgress? userProgress;
+  
+
   @override
   void initState() {
     super.initState();
     _fetchtTrainingPlans();
     _fetchAllMeetings();
+    getCategories();
+    getUserProgress();
   }
 
   int randomNumber(){
@@ -118,181 +126,357 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return msg;
   }
+
+  Future<void> getCategories() async{
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token');
+
+    final url = Uri.parse(AppConfig.getProgress); 
+    final response = await http.get(
+      url,
+      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode == 200) {
+      if (!mounted) return;
+
+      final List jsonList = jsonDecode(response.body);
+      print(jsonList.length);
+      final category = jsonList.map((e) => CategoryProgress.fromJson(e)).toList();
+
+      setState(() {
+        categories = category;
+      });
+    } else {
+      print("Action failed");
+      if (!mounted) return;
+    }
+  }
+  
+  Future<void> getUserProgress() async{
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token');
+
+    final url = Uri.parse(AppConfig.getUserProgress); 
+    final response = await http.get(
+      url,
+      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode == 200) {
+      if (!mounted) return;
+
+      final up = jsonDecode(response.body);
+
+      setState(() {
+        userProgress = UserProgress.fromJson(up);
+      });
+    } else {
+      print("Action failed");
+      if (!mounted) return;
+    }
+  }
+
+  String toStr(double? count, String unit){
+    if (count == null) return '- $unit';
+
+    return '${count.toStringAsFixed(2)} $unit';
+  }
+
+  String toStr2(int? count, String unit){
+    if (count == null) return '- $unit';
+
+    return '${count.toStringAsFixed(2)} $unit';
+  }
   
   @override
   Widget build(BuildContext context) {
     final lang = context.read<AppLanguage>();
 
-    return Center(
-      child: Column(
-        children: [
-          Center(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment.center,
-                  radius: 1.0,
-                  colors: [ 
-                    AppColors.accent,
-                    AppColors.background, 
-                    AppColors.accent,       
-                  ],
-                  stops: [0.2, 0.7, 1.0],
-                ),
-              ),
-              padding: const EdgeInsets.all(20),
-              width: MediaQuery.of(context).size.width * 0.75,
-              margin: const EdgeInsets.only(top: 20),
-              child: Center(
-                child: Text(
-                  lang.t('mot${randomNumber()}'),
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.dancingScript(
-                    color: AppColors.text,
-                    fontSize: 20,
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 32),
+        child: Center(
+          child: Column(
+            children: [
+              Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      center: Alignment.center,
+                      radius: 1.0,
+                      colors: [ 
+                        AppColors.accent,
+                        AppColors.background, 
+                        AppColors.accent,       
+                      ],
+                      stops: [0.2, 0.7, 1.0],
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(20),
+                  width: MediaQuery.of(context).size.width * 0.75,
+                  margin: const EdgeInsets.only(top: 20),
+                  child: Center(
+                    child: Text(
+                      lang.t('mot${randomNumber()}'),
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.dancingScript(
+                        color: AppColors.text,
+                        fontSize: 20,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
 
-          GestureDetector(
-            onTap: (){
-              widget.onPicked(2);
-            },
-            child: Container(
-              decoration: BoxDecoration(color: AppColors.accent),
-              padding: const EdgeInsets.all(10),
-              width: MediaQuery.of(context).size.width * 0.75,
-              margin: const EdgeInsets.only(top: 20),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      lang.t('upcomingMeetings'),
-                      style: TextStyle(color: AppColors.text, fontSize: 14, fontWeight: FontWeight.w700),
-                    ),
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Column(
-                          children: allMeetings.isNotEmpty ? allMeetings.map((t) => Container(
-                            width: MediaQuery.of(context).size.width * 0.75,
-                            margin: const EdgeInsets.only(top: 8),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: AppColors.background,
-                            ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  cleanTime(t.dateTime.hour, t.dateTime.minute),
-                                  style: const TextStyle(color: AppColors.text),
-                                ),
-                                Spacer(),
-                                Text(
-                                  t.name,
-                                  style: const TextStyle(color: AppColors.text),
-                                ),
-                                
-                              ],
-                            ),
-                          )).toList() : [Container(
-                            width: MediaQuery.of(context).size.width * 0.75,
-                            margin: const EdgeInsets.only(top: 8),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: AppColors.background,
-                            ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  lang.t('noMeetings'),
-                                  style: const TextStyle(color: AppColors.text),
-                                ),
-                              ],
-                            ),),],
+              GestureDetector(
+                onTap: (){
+                  widget.onPicked(2);
+                },
+                child: Container(
+                  decoration: BoxDecoration(color: AppColors.accent),
+                  padding: const EdgeInsets.all(10),
+                  width: MediaQuery.of(context).size.width * 0.75,
+                  margin: const EdgeInsets.only(top: 20),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          lang.t('upcomingMeetings'),
+                          style: TextStyle(color: AppColors.text, fontSize: 14, fontWeight: FontWeight.w700),
                         ),
-                      ),
-                    SizedBox(height: 8,), 
-                    Text(
-                      lang.t('upcomingTrainings'),
-                      style: TextStyle(color: AppColors.text, fontSize: 14, fontWeight: FontWeight.w700),
-                    ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Column(
-                          children: allTrainings.isNotEmpty ? allTrainings.map((t) => Container(
-                            width: MediaQuery.of(context).size.width * 0.75,
-                            margin: const EdgeInsets.only(top: 8),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: AppColors.background,
-                            ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  cleanTime(t.dateTime.hour, t.dateTime.minute),
-                                  style: const TextStyle(color: AppColors.text),
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Column(
+                              children: allMeetings.isNotEmpty ? allMeetings.map((t) => Container(
+                                width: MediaQuery.of(context).size.width * 0.75,
+                                margin: const EdgeInsets.only(top: 8),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: AppColors.background,
                                 ),
-                                Spacer(),
-                                Text(
-                                  cleanDuration(t.targetDuration),
-                                  style: const TextStyle(color: AppColors.text),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      cleanTime(t.dateTime.hour, t.dateTime.minute),
+                                      style: const TextStyle(color: AppColors.text),
+                                    ),
+                                    Spacer(),
+                                    Text(
+                                      t.name,
+                                      style: const TextStyle(color: AppColors.text),
+                                    ),
+                                    
+                                  ],
                                 ),
-                              ],
-                            ),
-                          )).toList() : [Container(
-                            width: MediaQuery.of(context).size.width * 0.75,
-                            margin: const EdgeInsets.only(top: 8),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: AppColors.background,
-                            ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  lang.t('noUpcomingTrainings'),
-                                  style: const TextStyle(color: AppColors.text),
+                              )).toList() : [Container(
+                                width: MediaQuery.of(context).size.width * 0.75,
+                                margin: const EdgeInsets.only(top: 8),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: AppColors.background,
                                 ),
-                              ],
-                            ),),],
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      lang.t('noMeetings'),
+                                      style: const TextStyle(color: AppColors.text),
+                                    ),
+                                  ],
+                                ),),],
+                            ),
+                          ),
+                        SizedBox(height: 8,), 
+                        Text(
+                          lang.t('upcomingTrainings'),
+                          style: TextStyle(color: AppColors.text, fontSize: 14, fontWeight: FontWeight.w700),
                         ),
-                      ),
-                  ],
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Column(
+                              children: allTrainings.isNotEmpty ? allTrainings.map((t) => Container(
+                                width: MediaQuery.of(context).size.width * 0.75,
+                                margin: const EdgeInsets.only(top: 8),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: AppColors.background,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      cleanTime(t.dateTime.hour, t.dateTime.minute),
+                                      style: const TextStyle(color: AppColors.text),
+                                    ),
+                                    Spacer(),
+                                    Text(
+                                      cleanDuration(t.targetDuration),
+                                      style: const TextStyle(color: AppColors.text),
+                                    ),
+                                  ],
+                                ),
+                              )).toList() : [Container(
+                                width: MediaQuery.of(context).size.width * 0.75,
+                                margin: const EdgeInsets.only(top: 8),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: AppColors.background,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      lang.t('noUpcomingTrainings'),
+                                      style: const TextStyle(color: AppColors.text),
+                                    ),
+                                  ],
+                                ),),],
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
 
-          
-          Container(
-            decoration: BoxDecoration(color: AppColors.accent),
-            padding: const EdgeInsets.all(20),
-            width: MediaQuery.of(context).size.width * 0.75,
-            margin: const EdgeInsets.only(top: 20),
-            child: Center(
-              child: Text(
-                'Last training',
-                style: TextStyle(color: AppColors.text, fontSize: 12),
+              Container(
+                decoration: BoxDecoration(color: AppColors.accent),
+                padding: const EdgeInsets.all(10),
+                width: MediaQuery.of(context).size.width * 0.75,
+                margin: const EdgeInsets.only(top: 20),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            lang.t('totalDistance'),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.text,
+                            ),
+                          ),
+                          Spacer(),
+                          Text(
+                            toStr(userProgress?.totalDistance, 'km'),
+                            style: const TextStyle(fontSize: 12, color: AppColors.text),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            lang.t('totalSessions'),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.text,
+                            ),
+                          ),
+                          Spacer(),
+                          Text(
+                            userProgress?.totalSessions.toString() ?? '-',
+                            style: const TextStyle(fontSize: 12, color: AppColors.text),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            lang.t('totalTricksLearned'),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.text,
+                            ),
+                          ),
+                          Spacer(),
+                          Text(
+                            userProgress?.totalTricksLearned.toString() ?? '-',
+                            style: const TextStyle(fontSize: 12, color: AppColors.text),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            lang.t('caloriesBurned'),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.text,
+                            ),
+                          ),
+                          Spacer(),
+                          Text(
+                            toStr2(userProgress?.caloriesBurned, 'kcal'),
+                            style: const TextStyle(fontSize: 12, color: AppColors.text),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(color: AppColors.accent),
-            padding: const EdgeInsets.all(20),
-            width: MediaQuery.of(context).size.width * 0.75,
-            margin: const EdgeInsets.only(top: 20),
-            child: Center(
-              child: Text(
-                'Last meeting',
-                style: TextStyle(color: AppColors.text, fontSize: 12),
+
+              
+              Container(
+                decoration: BoxDecoration(color: AppColors.accent),
+                padding: const EdgeInsets.all(10),
+                width: MediaQuery.of(context).size.width * 0.75,
+                margin: const EdgeInsets.only(top: 20),
+                child: Center(
+                  child: Column(
+                    children: categories.map((c) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            c.name,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.text,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: LinearProgressIndicator(
+                              value: c.progress, 
+                              minHeight: 10,
+                              backgroundColor: AppColors.background,
+                              valueColor: AlwaysStoppedAnimation(AppColors.secondary),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "${c.mastered}/${c.total} ${lang.t('mastered')}",
+                            style: const TextStyle(fontSize: 12, color: AppColors.text),
+                          ),
+                          const SizedBox(height: 12),
+                        ],
+                      ),
+                    ).toList(),
+                  )
+
+                ),
               ),
-            ),
+              Container(
+                decoration: BoxDecoration(color: AppColors.accent),
+                padding: const EdgeInsets.all(10),
+                width: MediaQuery.of(context).size.width * 0.75,
+                margin: const EdgeInsets.only(top: 20),
+                child: Center(
+                  child: Text(
+                    'Last meeting',
+                    style: TextStyle(color: AppColors.text, fontSize: 12),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        )
+      )
     );
   }
 }

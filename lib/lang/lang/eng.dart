@@ -27,6 +27,11 @@ const Map<String, String> eng = {
   'delete': 'Delete',
   'cancel': 'Cancel',
 
+  // HOME PAGE
+  'totalDistance': 'Total Distance',
+  'totalSessions': 'Total Sessions',
+  'totalTricksLearned': 'Total Tricks Learned',
+
   // USER DATA
   'username': 'Username',
   'password': 'Password',
@@ -168,6 +173,10 @@ const Map<String, String> eng = {
   'completed': 'Completed',
   'editTraining': 'Edit Training',
 
+  'startTracking': 'Start Tracking',
+  'stopTracking': 'Stop Tracking',
+  'takeAPicture': 'Take a Picture',
+
   // NOTIFICATIONS
   'planTrainingTitle': 'Training Reminder',
   'planTrainingMessage': 'Your Training Starts In 1 Hour',
@@ -286,6 +295,7 @@ const Map<String, String> eng = {
   'link': 'Link',
   'right': 'Right',
   'left': 'Left',
+  'other': 'Other',
   'category': 'Category',
   'leg': 'Leg',
 
@@ -317,6 +327,8 @@ const Map<String, String> eng = {
 
   'distanceNotANumber': 'Distance Must Be A Number',
   'locationShouldNotBeEmpty' : 'Location Should Not Be Empty',
+
+  'wrongName': 'Name is required',
 
   // ENDPOINTS REQUEST
   'Wrong password!': 'Wrong Password!',

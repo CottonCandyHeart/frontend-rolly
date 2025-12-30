@@ -92,110 +92,114 @@ class _TrickWidgetState extends State<TrickWidget> {
   Widget build(BuildContext context) {
     final lang = context.read<AppLanguage>();
 
-    return Column(
-        children: [
-          Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: EdgeInsetsGeometry.fromLTRB(10, 0, 0, 0),
-                child: IconButton(
-                  onPressed: widget.onBack,
-                  icon: const Icon(Icons.arrow_back),
-                  color: AppColors.text,
-                  iconSize: 30,
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsetsGeometry.fromLTRB(10, 0, 0, 0),
+                  child: IconButton(
+                    onPressed: widget.onBack,
+                    icon: const Icon(Icons.arrow_back),
+                    color: AppColors.text,
+                    iconSize: 30,
+                  ),
                 ),
               ),
-            ),
 
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-          Text(
-            widget.trick.trickName,
-            style: const TextStyle(
-              fontSize: 18,
-              color: AppColors.text,
-              fontFamily: 'Poppins-Bold',
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          YoutubePlayer(
-            controller: _controller,
-          ),
-          const SizedBox(height: 12),
-
-          if (widget.trick.isMastered)
-            Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.accent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                            ),
-                            onPressed: _setMastered,
-                            child: Text(
-                              lang.t('mastered'),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          ),
-                  ),
-                ),
-            ),
-          if (!widget.trick.isMastered)
-            Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                            ),
-                            onPressed: _setMastered,
-                            child: Text(
-                              lang.t('notMastered'),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: AppColors.background,
-                              ),
-                            ),
-                          ),
-                  ),
-                ),
-            ),
-
-          const SizedBox(height: 20),
-
-          Padding(
-            padding: EdgeInsetsGeometry.all(20),
-            child: Text(
-              widget.trick.description,
-              textAlign: TextAlign.justify,
+            Text(
+              widget.trick.trickName,
               style: const TextStyle(
+                fontSize: 18,
                 color: AppColors.text,
-                fontFamily: 'Poppins',
+                fontFamily: 'Poppins-Bold',
               ),
             ),
-          )
-        ],
-      );
+
+            const SizedBox(height: 20),
+
+            YoutubePlayer(
+              controller: _controller,
+            ),
+            const SizedBox(height: 12),
+
+            if (widget.trick.isMastered)
+              Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 0),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.accent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                              ),
+                              onPressed: _setMastered,
+                              child: Text(
+                                lang.t('mastered'),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                    ),
+                  ),
+              ),
+            if (!widget.trick.isMastered)
+              Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 0),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                              ),
+                              onPressed: _setMastered,
+                              child: Text(
+                                lang.t('notMastered'),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: AppColors.background,
+                                ),
+                              ),
+                            ),
+                    ),
+                  ),
+              ),
+
+            const SizedBox(height: 20),
+
+            Padding(
+              padding: EdgeInsetsGeometry.all(20),
+              child: Text(
+                widget.trick.description,
+                textAlign: TextAlign.justify,
+                style: const TextStyle(
+                  color: AppColors.text,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            )
+          ],
+        ),
+      )
+    );
   }
 }

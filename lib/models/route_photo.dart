@@ -12,8 +12,8 @@ class RoutePhoto {
   factory RoutePhoto.fromJson(Map<String, dynamic> json) {
     return RoutePhoto(
       id: json['id'],
-      latitude: json['latitude'],
-      longitude: json['longitude'],
+      latitude: double.parse(json['latitude']),
+      longitude: double.parse(json['longitude']),
       imageUrl: json['imageUrl'],
       timestamp: DateTime.parse(json['timestamp']),
     );
@@ -25,7 +25,7 @@ class RoutePhoto {
       'latitude': latitude,
       'longitude': longitude,
       'imageUrl': imageUrl,
-      'timestamp': timestamp,
+      'timestamp': timestamp.toIso8601String(),
     };
   }
 }

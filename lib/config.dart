@@ -15,6 +15,7 @@ class AppConfig {
   static const String measurementsEndpoint = '$userEndpoint/meas';
   static const String changePasswd = '$userEndpoint/change-password';
   static const String removeUser = '$userEndpoint/remove';
+  static const String getUserProgress = '$userEndpoint/progress';
 
   static const String adminEndpoint = '$apiBaseUrl/admin';
   static const String chackAdminRole = '$adminEndpoint/isAdmin';
@@ -22,6 +23,7 @@ class AppConfig {
   static const String adminAaddlUser = '$adminEndpoint/add';
   static const String changeRole = '$adminEndpoint/role';
   static const String adminDeleteEvent = '$adminEndpoint/del/event';
+  static const String adminChangeCategory = '$adminEndpoint/update';
 
   static const String trickEndpoint = '$apiBaseUrl/trick';
   static const String resetTrickEndpoint = '$trickEndpoint/reset';
@@ -32,6 +34,7 @@ class AppConfig {
   static const String getAllTricks = '$trickEndpoint/get-all';
   static const String adminAddTrick = '$trickEndpoint/add-trick';
   static const String deleteTrick = '$trickEndpoint/del-trick';
+  static const String getProgress = '$trickEndpoint/progress';
 
   static const String trainingPlans = '$apiBaseUrl/training';
   static const String addTrainingPlan = '$trainingPlans/add';
