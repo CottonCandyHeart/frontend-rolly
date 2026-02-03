@@ -27,3 +27,4 @@ class AppLanguage extends ChangeNotifier {
 
   String t(String key) => _localizedStrings[key] ?? key;
 }
+

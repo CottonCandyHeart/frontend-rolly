@@ -136,9 +136,7 @@ class _TrackTrainingState extends State<TrackTraining> {
       lastPoint = newPoint;
       routePoints.add(newPoint);
       });
-      // start tracking
     } catch (e) {
-      // user denied OR service disabled
       setState(() {
         isTracking = false;
       });
@@ -147,7 +145,6 @@ class _TrackTrainingState extends State<TrackTraining> {
   }
 
   void stopTracking() async {
-    print("I'm here: 1");
     await positionStream?.cancel();
 
     _timer?.cancel();
@@ -158,11 +155,6 @@ class _TrackTrainingState extends State<TrackTraining> {
     if (!isTracking) return;
     if (positionStream == null) return;
 
-    print("I'm here: 2");
-
-    //final duration = endTime!.difference(startTime!);
-    //elapsedSeconds = duration.inSeconds;
-
     final duration = Duration(seconds: elapsedSeconds);
 
     int calories = NumUtils().countCalories(
@@ -171,8 +163,6 @@ class _TrackTrainingState extends State<TrackTraining> {
       duration,
       context.read<AppLanguage>()
     );
-
-    print("I'm here: 3");
 
     final trainingRoute = TrainingRoute(
       name: _nameController.text,
@@ -193,12 +183,8 @@ class _TrackTrainingState extends State<TrackTraining> {
       body: jsonEncode(trainingRoute.toJson()),
     );
 
-    print("I'm here: 4");
-
     if (response.statusCode == 200){
-      print("I'm here: 5");
       if (mounted) {
-        print("I'm here: 6");
           final message = response.body;
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(context.read<AppLanguage>().t('$message'))),
@@ -208,10 +194,7 @@ class _TrackTrainingState extends State<TrackTraining> {
           Navigator.pop(context);
         }
     } else {
-      print("I'm here: 7");
       if (!mounted) return;
-
-      print("I'm here: 8");
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(context.read<AppLanguage>().t('actionFailed'))),

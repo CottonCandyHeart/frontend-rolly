@@ -92,21 +92,21 @@ const Map<String, String> eng = {
   'contactUs': 'Contact Us',
 
   // LEGAL INFORMATION
-  'termsConditions': 'Terms and Conditions', // Regulamin
-  'termsConditions_v1': 'By using the application, the user accepts these terms and conditions.', // Korzystając z aplikacji, użytkownik akceptuje niniejszy regulamin. 
-  'termsConditions_v2': 'The application is not liable for any damage resulting from improper use or violation of the principles set out in this document.', // Aplikacja nie ponosi odpowiedzialności za szkody wynikające z nieprawidłowego użytkowania
-  'termsConditions_v3': 'The application is not liable for any damage resulting from improper use or violation of the principles set out in this document.', // lub naruszenia zasad określonych w niniejszym dokumencie.
+  'termsConditions': 'Terms and Conditions', 
+  'termsConditions_v1': 'By using the application, the user accepts these terms and conditions.', 
+  'termsConditions_v2': 'The application is not liable for any damage resulting from improper use or violation of the principles set out in this document.',
+  'termsConditions_v3': 'The application is not liable for any damage resulting from improper use or violation of the principles set out in this document.',
 
-  'privacyPolicy': 'Privacy Policy', // Polityka prywatności
-  'privacyPolicy_v1': 'Your data is processed solely to ensure the proper operation of the application.', // Twoje dane są przetwarzane wyłącznie w celu zapewnienia poprawnego działania aplikacji.
-  'privacyPolicy_v2': 'We do not share data with third parties, except as required by law.', // Nie udostępniamy danych osobom trzecim, z wyjątkiem przypadków wymaganych przez prawo. 
-  'privacyPolicy_v3': 'You have the right to access, correct, and delete your data.', // Masz prawo dostępu, poprawiania oraz usunięcia swoich danych.
+  'privacyPolicy': 'Privacy Policy', 
+  'privacyPolicy_v1': 'Your data is processed solely to ensure the proper operation of the application.',
+  'privacyPolicy_v2': 'We do not share data with third parties, except as required by law.', 
+  'privacyPolicy_v3': 'You have the right to access, correct, and delete your data.', 
 
-  'copyright': 'Copyright', // Prawa autorskie
-  'copyright_v1': 'All materials, graphics, texts, and user interface elements are protected by copyright.', // Wszelkie materiały, grafiki, teksty oraz elementy interfejsu użytkownika są chronione prawem autorskim.
-  'copyright_v2': 'Copying or distribution without the owner\'s consent is prohibited. prohibited.', // Kopiowanie lub dystrybucja bez zgody właściciela jest zabroniona.
+  'copyright': 'Copyright',
+  'copyright_v1': 'All materials, graphics, texts, and user interface elements are protected by copyright.', 
+  'copyright_v2': 'Copying or distribution without the owner\'s consent is prohibited. prohibited.',
 
-  'R': '© 2025 Rolly. All rights reserved.', // Wszystkie prawa zastrzezone
+  'R': '© 2025 Rolly. All rights reserved.', 
 
   // ABOUT US
   'author': 'Author',
@@ -144,7 +144,7 @@ const Map<String, String> eng = {
   'trackTraining': 'Track Training',
   'chooseDate': 'Choose Date',
   'planTraining': 'Plan Training',
-  'doneTrainings': ' Trainings done',
+  'doneTrainings': 'Trainings done',
   'futureTrainings': 'Planned trainings',
 
   'trainingDate': 'Date',

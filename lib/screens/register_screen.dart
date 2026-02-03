@@ -122,9 +122,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       }),
     );
 
-    print('Login response status: ${loginResponse.statusCode}');
-    print('Login response body: ${loginResponse.body}');
-
     setState(() => _isLoading = false);
 
     if (loginResponse.statusCode == 200) {
@@ -157,7 +154,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         }
       }
     } else {
-      // obsługa błędu logowania
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(context.read<AppLanguage>().t('loginFailed'))),
       );

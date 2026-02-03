@@ -58,14 +58,13 @@ class _CustomCalendarState extends State<CustomCalendar>{
   void initState() {
     super.initState();
     widget.trainings().then((plans) {
-      print("Plans fetched: ${plans.length}");
+      
       setState(() {
         allTrainings = plans;
         daysWithPlannedTrainings = extractTrainingDays(plans);
       });
     });
     widget.routes().then((routes) {
-      print("Routes fetched: ${routes.length}");
       setState(() {
         allRoutes = routes;
         highlightedDays = extractRouteDays(routes);
@@ -189,7 +188,6 @@ class _CustomCalendarState extends State<CustomCalendar>{
 
     if (response.statusCode == 200) {
       final List jsonList = jsonDecode(response.body);
-      print(jsonDecode(response.body));
       final meetings = jsonList.map((e) => Meeting.fromJson(e)).toList();
 
       setState(() {
@@ -197,7 +195,6 @@ class _CustomCalendarState extends State<CustomCalendar>{
         daysWithMeetings = extractMeetingDaysForMonth(meetings);
       });
 
-      print("Meetings fetched: ${allMeetings.length}");
     } else {
       print("FAILED fetching meetings: ${response.body}");
     }
