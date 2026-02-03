@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
     final lang = context.watch<AppLanguage>();
 
     return MaterialApp(
-      title: 'Rolly',
+      title: lang.t('appName'),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.background),
         fontFamily: 'Poppins',

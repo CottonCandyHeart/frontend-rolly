@@ -201,6 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Center(
                 child: Container(
+                  /*
                   decoration: BoxDecoration(
                     gradient: RadialGradient(
                       center: Alignment.center,
@@ -212,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                       stops: [0.2, 0.7, 1.0],
                     ),
-                  ),
+                  ),*/
                   padding: const EdgeInsets.all(20),
                   width: MediaQuery.of(context).size.width * 0.75,
                   margin: const EdgeInsets.only(top: 20),
@@ -420,56 +421,47 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              
-              Container(
-                decoration: BoxDecoration(color: AppColors.accent),
-                padding: const EdgeInsets.all(10),
-                width: MediaQuery.of(context).size.width * 0.75,
-                margin: const EdgeInsets.only(top: 20),
-                child: Center(
-                  child: Column(
-                    children: categories.map((c) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            c.name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.text,
+              GestureDetector(
+                onTap: () {
+                  widget.onPicked(1);
+                },
+                child: Container(
+                  decoration: BoxDecoration(color: AppColors.accent),
+                  padding: const EdgeInsets.all(10),
+                  width: MediaQuery.of(context).size.width * 0.75,
+                  margin: const EdgeInsets.only(top: 20),
+                  child: Center(
+                    child: Column(
+                      children: categories.map((c) => Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              c.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.text,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 6),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: LinearProgressIndicator(
-                              value: c.progress, 
-                              minHeight: 10,
-                              backgroundColor: AppColors.background,
-                              valueColor: AlwaysStoppedAnimation(AppColors.secondary),
+                            const SizedBox(height: 6),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: LinearProgressIndicator(
+                                value: c.progress, 
+                                minHeight: 10,
+                                backgroundColor: AppColors.background,
+                                valueColor: AlwaysStoppedAnimation(AppColors.secondary),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            "${c.mastered}/${c.total} ${lang.t('mastered')}",
-                            style: const TextStyle(fontSize: 12, color: AppColors.text),
-                          ),
-                          const SizedBox(height: 12),
-                        ],
-                      ),
-                    ).toList(),
-                  )
-
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(color: AppColors.accent),
-                padding: const EdgeInsets.all(10),
-                width: MediaQuery.of(context).size.width * 0.75,
-                margin: const EdgeInsets.only(top: 20),
-                child: Center(
-                  child: Text(
-                    'Last meeting',
-                    style: TextStyle(color: AppColors.text, fontSize: 12),
+                            const SizedBox(height: 4),
+                            Text(
+                              "${c.mastered}/${c.total} ${lang.t('mastered')}",
+                              style: const TextStyle(fontSize: 12, color: AppColors.text),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                        ),
+                      ).toList(),
+                    )
                   ),
                 ),
               ),

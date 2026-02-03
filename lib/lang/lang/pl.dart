@@ -299,6 +299,11 @@ const Map<String, String> pl = {
   'category': 'Kategoria',
   'leg': 'Noga',
 
+  // Categories
+  'Basics': 'Podstawy',
+  //'Slalom': 'Slalom',
+  'Others': 'Inne',
+
   // ERROR
   'wrongLoginOrPassword': 'Niepoprawne dane logowania',
   'differentPasswd': 'Hasła różnią się od siebie',

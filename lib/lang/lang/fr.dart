@@ -299,6 +299,11 @@ const Map<String, String> fr = {
   'category': 'Catégorie',
   'leg': 'Jambe',
 
+  // Categories
+  'Basics': 'Bases',
+  //'Slalom': 'Slalom',
+  'Others': 'Autres',
+
   // ERROR
   'wrongLoginOrPassword': 'Identifiant ou mot de passe incorrect',
   'differentPasswd': 'Mot de passe incorrect',
