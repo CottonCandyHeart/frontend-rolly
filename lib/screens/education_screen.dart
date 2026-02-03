@@ -123,7 +123,7 @@ class _EducationState extends State<EducationScreen> {
                   margin: const EdgeInsets.only(top: 20),
                   child: Center(
                     child: Text(
-                      category.name,
+                      lang.t(category.name),
                       style: const TextStyle(
                         color: AppColors.text,
                         fontFamily: 'Poppins-Bold',
