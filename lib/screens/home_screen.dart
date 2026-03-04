@@ -196,8 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 32),
-        child: Center(
-          child: Column(
+        child: Column(
             children: [
               Center(
                 child: Container(
@@ -467,7 +466,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-        )
       )
     );
   }

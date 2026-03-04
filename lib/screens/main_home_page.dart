@@ -98,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-      body: Center(child: widgetOptions.elementAt(_currentIndex)),
+      body: widgetOptions.elementAt(_currentIndex),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
         onTap: (index) {

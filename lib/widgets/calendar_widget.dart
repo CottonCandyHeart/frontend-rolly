@@ -200,6 +200,16 @@ class _CustomCalendarState extends State<CustomCalendar>{
     }
   }
 
+  String getDate(int day, int month, int year){
+    String s = '';
+    if (day < 10) s+='0';
+    s += '$day.';
+    if (month < 10) s+='0';
+    s += '$month.';
+    s += '$year';
+    return s;
+  }
+
   @override
   Widget build(BuildContext context) {
     final lang = context.read<AppLanguage>();
@@ -404,7 +414,7 @@ class _CustomCalendarState extends State<CustomCalendar>{
                     child: Padding(
                       padding: EdgeInsetsGeometry.fromLTRB(20, 0, 0, 0),
                       child: Text(
-                        "$selectedDay.${chosen.month}.${chosen.year}",
+                        getDate(selectedDay!, chosen.month, chosen.year),
                         style: const TextStyle(color: AppColors.text, fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     )

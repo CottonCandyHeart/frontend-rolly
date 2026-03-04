@@ -10,12 +10,14 @@ import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class TrickWidget extends StatefulWidget {
   final TrickList trick;
+  final Future<List<TrickList>> trickList;
   final VoidCallback onBack;
   final Function(TrickList trick) onTrickUpdated; 
 
   const TrickWidget({
     super.key,
     required this.trick,
+    required this.trickList,
     required this.onBack,
     required this.onTrickUpdated,   
   });
@@ -26,10 +28,14 @@ class TrickWidget extends StatefulWidget {
 
 class _TrickWidgetState extends State<TrickWidget> {
   late YoutubePlayerController _controller;
+  List<TrickList> allTypes = [];
+  late TrickList selectedTrick;
 
   @override
   void initState() {
     super.initState();
+
+    selectedTrick = widget.trick;
 
     final id = YoutubePlayerController.convertUrlToId(widget.trick.link);
 
@@ -41,6 +47,18 @@ class _TrickWidgetState extends State<TrickWidget> {
         showFullscreenButton: true,
       ),
     );
+
+    loadTricks();
+  }
+
+
+  Future<void> loadTricks() async {
+    final tricks = await widget.trickList;
+    if (!mounted) return;
+    setState(() {
+      allTypes = tricks;
+    });
+    print(allTypes.length);
   }
 
   Future<void> _setMastered() async {
@@ -95,6 +113,7 @@ class _TrickWidgetState extends State<TrickWidget> {
     return SafeArea(
       child: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Align(
                 alignment: Alignment.centerLeft,
@@ -114,11 +133,46 @@ class _TrickWidgetState extends State<TrickWidget> {
             Text(
               widget.trick.trickName,
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 24,
                 color: AppColors.text,
                 fontFamily: 'Poppins-Bold',
               ),
             ),
+
+            const SizedBox(height: 20),
+
+            if (allTypes.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Wrap(
+                  spacing: 10,
+                  children: allTypes.map((trickVariant) {
+                    final isSelected = trickVariant.leg == selectedTrick.leg;
+
+                    return ChoiceChip(
+                      label: Text(trickVariant.leg),
+                      selected: isSelected,
+                      onSelected: (_) {
+                        setState(() {
+                          selectedTrick = trickVariant;
+
+                          final id = YoutubePlayerController
+                              .convertUrlToId(trickVariant.link);
+
+                          _controller.loadVideoById(videoId: id!);
+                        });
+                      },
+                      selectedColor: AppColors.primary,
+                      backgroundColor: AppColors.accent,
+                      labelStyle: TextStyle(
+                        color: isSelected
+                            ? AppColors.background
+                            : AppColors.text,
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
 
             const SizedBox(height: 20),
 
@@ -127,7 +181,7 @@ class _TrickWidgetState extends State<TrickWidget> {
             ),
             const SizedBox(height: 12),
 
-            if (widget.trick.isMastered)
+            if (selectedTrick.isMastered)
               Align(
                   alignment: Alignment.centerRight,
                   child: Padding(
@@ -155,7 +209,7 @@ class _TrickWidgetState extends State<TrickWidget> {
                     ),
                   ),
               ),
-            if (!widget.trick.isMastered)
+            if (!selectedTrick.isMastered)
               Align(
                   alignment: Alignment.centerRight,
                   child: Padding(
@@ -189,7 +243,7 @@ class _TrickWidgetState extends State<TrickWidget> {
             Padding(
               padding: EdgeInsetsGeometry.all(20),
               child: Text(
-                widget.trick.description,
+                selectedTrick.description,
                 textAlign: TextAlign.justify,
                 style: const TextStyle(
                   color: AppColors.text,

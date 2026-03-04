@@ -48,6 +48,31 @@ class _EducationState extends State<EducationScreen> {
     }
   }
 
+  Future<List<TrickList>> getAllTricks(String trickName) async{
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token');
+
+    if (token == null) {
+      throw Exception("Missing token");
+    }
+
+    final response = await http.get(
+      Uri.parse('${AppConfig.getAllTricksByName}/$trickName'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((e) => TrickList.fromJson(e)).toList();
+    } else {
+      throw Exception('Action failed');
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     // kategoria nie jest wybrana
@@ -71,6 +96,7 @@ class _EducationState extends State<EducationScreen> {
     // trick niewybrany
     return TrickWidget(
       trick: selectedTrick!,
+      trickList: getAllTricks(selectedTrick!.trickName),
       onBack: () => setState(() => selectedTrick = null),
       onTrickUpdated: (updatedTrick) {
         setState(() {
@@ -109,6 +135,7 @@ class _EducationState extends State<EducationScreen> {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: categories.map((category) {
               return GestureDetector(
                 onTap: () {

@@ -33,6 +33,7 @@ class AppConfig {
   static const String deleteCategory = '$trickEndpoint/del-category';
   static const String addCategory = '$trickEndpoint/add-category';
   static const String getAllTricks = '$trickEndpoint/get-all';
+  static const String getAllTricksByName = '$trickEndpoint/all';
   static const String adminAddTrick = '$trickEndpoint/add-trick';
   static const String deleteTrick = '$trickEndpoint/del-trick';
   static const String getProgress = '$trickEndpoint/progress';

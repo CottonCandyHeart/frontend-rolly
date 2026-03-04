@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert'; 
 import 'package:flutter/material.dart'; 
 import 'package:frontend_rolly/config.dart'; 
@@ -23,11 +24,23 @@ class TrickListWidget extends StatefulWidget {
 
 class _TrickListWidgetState  extends State<TrickListWidget> {
   late Future<List<TrickList>> _tricksFuture;
+  List<TrickList> _filteredTricks = [];
+  List<TrickList> _allTricks = [];
 
   @override
   void initState() {
     super.initState();
+    _loadAllTricks();
+  }
+
+  void _loadAllTricks() async {
     _tricksFuture = fetchTricks();
+    _allTricks = await _tricksFuture;
+    _allTricks = {
+          for (var trick in _allTricks) trick.trickName: trick
+        }.values.toList();
+    _filteredTricks = _allTricks;
+    if (mounted) setState(() {});
   }
   
   Future<List<TrickList>> fetchTricks() async { 
@@ -74,6 +87,20 @@ class _TrickListWidgetState  extends State<TrickListWidget> {
         SnackBar(content: Text(context.read<AppLanguage>().t('actionFailed'))),
       );
     }
+  }
+
+  Timer? _debounce;
+
+  void _filterTricks(String query) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      setState(() {
+        _filteredTricks = _allTricks
+            .where((u) =>
+                u.trickName.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      });
+    });
   }
   
   @override Widget build(BuildContext context) { 
@@ -122,81 +149,116 @@ class _TrickListWidgetState  extends State<TrickListWidget> {
         } 
         
         final tricks = snapshot.data!; 
+        final uniqueTricks = {
+          for (var trick in tricks) trick.trickName: trick
+        }.values.toList();
         
-        return Column( 
-          children: [ 
-            Row(
-              children: [
-                Align( 
-                  alignment: Alignment.centerLeft, 
-                  child: Padding( 
-                    padding: EdgeInsetsGeometry.fromLTRB(10, 0, 0, 0), 
-                    child: IconButton( 
-                      onPressed: widget.onBack, 
-                      icon: const Icon(Icons.arrow_back), 
-                      color: AppColors.text, iconSize: 30, 
-                    ), 
-                  ), 
-                ), 
-                Spacer(),
-                Align( 
-                  alignment: Alignment.centerRight, 
-                  child: Padding( 
-                    padding: EdgeInsetsGeometry.fromLTRB(0, 0, 20, 0), 
-                    child: GestureDetector(
-                      onTap: () => _resetProgress(context),
-                      child: Text(
-                        lang.t('resetProgress'),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.text,
-                          fontSize: 12,
+        return SafeArea (
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView (
+                padding: const EdgeInsets.only(bottom: 32),
+                child: Column( 
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [ 
+                    Row(
+                      children: [
+                        Align( 
+                          alignment: Alignment.centerLeft, 
+                          child: Padding( 
+                            padding: EdgeInsetsGeometry.fromLTRB(10, 0, 0, 0), 
+                            child: IconButton( 
+                              onPressed: widget.onBack, 
+                              icon: const Icon(Icons.arrow_back), 
+                              color: AppColors.text, iconSize: 30, 
+                            ), 
+                          ), 
+                        ), 
+                        Spacer(),
+                        Align( 
+                          alignment: Alignment.centerRight, 
+                          child: Padding( 
+                            padding: EdgeInsetsGeometry.fromLTRB(0, 0, 20, 0), 
+                            child: GestureDetector(
+                              onTap: () => _resetProgress(context),
+                              child: Text(
+                                lang.t('resetProgress'),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.text,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ), 
+                        ), 
+                      ],
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                      child: TextField(
+                        onChanged: _filterTricks,
+                        decoration: InputDecoration(
+                          hintText: lang.t('searchTrick'),
+                          prefixIcon: const Icon(Icons.search, color: AppColors.text,),
+                          filled: true,
+                          fillColor: AppColors.accent,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
                       ),
                     ),
-                  ), 
-                ), 
-              ],
-            ),
-            
-            ...tricks.map((trick) { 
-              return GestureDetector( 
-                onTap: () => widget.onTrickSelected(trick), 
-                child: Container( 
-                  decoration: BoxDecoration(
-                    color: AppColors.accent), 
-                    padding: const EdgeInsets.all(20), 
-                    width: MediaQuery.of(context).size.width * 0.75, 
-                    margin: const EdgeInsets.only(top: 20), 
-                    child: Center( 
-                      child: Row( 
-                        children: [ 
-                          Text( 
-                            trick.trickName, 
-                            style: const TextStyle( 
-                              color: AppColors.text, 
-                              fontFamily: 'Poppins-Bold', 
-                              fontSize: 20, 
+                    
+                    ..._filteredTricks.map((trick) { 
+                      return GestureDetector( 
+                        onTap: () => widget.onTrickSelected(trick), 
+                        child: Container( 
+                          decoration: BoxDecoration(
+                            color: AppColors.accent), 
+                            padding: const EdgeInsets.all(20), 
+                            width: MediaQuery.of(context).size.width * 0.75, 
+                            margin: const EdgeInsets.only(top: 20), 
+                            child: Center( 
+                              child: Row( 
+                                children: [ 
+                                  Expanded(
+                                    child: Text( 
+                                      trick.trickName,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis, 
+                                      style: const TextStyle( 
+                                        color: AppColors.text, 
+                                        fontFamily: 'Poppins-Bold', 
+                                        fontSize: 20, 
+                                      ), 
+                                    ), 
+                                  ),
+                                  
+                                  //Spacer(), 
+                                  
+                                  if (trick.isMastered) 
+                                    const Icon( 
+                                      Icons.check, 
+                                      color: AppColors.current, 
+                                      size: 28,
+                                    ), 
+                                ] 
+                              ), 
                             ), 
                           ), 
-                          
-                          Spacer(), 
-                          
-                          if (trick.isMastered) 
-                            const Icon( 
-                              Icons.check, 
-                              color: AppColors.current, 
-                              size: 28,
-                            ), 
-                        ] 
-                      ), 
+                        ); 
+                      }
                     ), 
-                  ), 
-                ); 
-              }
-            ), 
-          ], 
-        ); 
+                  ], 
+                )
+              );
+            }
+          )
+        );    
       }, 
     ); 
   }

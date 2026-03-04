@@ -229,11 +229,11 @@ const Map<String, String> pl = {
   'organizer': 'Organizator',
 
   'noMeetingsAttended': 'Brak spotkań w których bierzesz udział',
-  'upcomingMeetings': 'Nadchodzące spotkania',
+  'upcomingMeetings': 'Dzisiejsze spotkania',
   'noMeetings': 'Brak nadchodzących spotkań',
 
   'upcoming': 'Nadchodzące',
-  'upcomingTrainings': 'Nadchodzące treningi',
+  'upcomingTrainings': 'Dzisiejsze treningi',
   'noUpcomingTrainings': 'Brak nadchodzących treningów',
 
   // COOUNTRIES
