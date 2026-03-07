@@ -91,16 +91,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (response.statusCode == 200) {
       final List jsonList = jsonDecode(response.body);
-      print(jsonDecode(response.body));
       final meetings = jsonList.map((e) => Meeting.fromJson(e)).toList();
 
       setState(() {
         allMeetings = meetings;
       });
 
-      print("Meetings fetched: ${allMeetings.length}");
     } else {
-      print("FAILED fetching meetings: ${response.body}");
+      print("FAILED fetching meetings");
     }
   }
 
@@ -141,7 +139,6 @@ class _HomeScreenState extends State<HomeScreen> {
       if (!mounted) return;
 
       final List jsonList = jsonDecode(response.body);
-      print(jsonList.length);
       final category = jsonList.map((e) => CategoryProgress.fromJson(e)).toList();
 
       setState(() {

@@ -28,6 +28,11 @@ class _UnitsWidgetState extends State<UnitsWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
+            'To nie działa ale może kiedyś będzie XDDD', 
+            style: TextStyle(color: Color.fromARGB(255, 255, 0, 0)),
+          ),
+          const SizedBox(height: 20),
+          Text(
             unit.t('units'),
             style: const TextStyle(
               fontSize: 22,
