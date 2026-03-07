@@ -281,7 +281,7 @@ class _UserProfileState extends State<UserProfileScreen> {
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Text(
-                                widget.userResponse.level,
+                                lang.t(widget.userResponse.level),
                                 style: TextStyle(color: AppColors.text),
                               ),
                             ),

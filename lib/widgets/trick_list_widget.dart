@@ -36,9 +36,34 @@ class _TrickListWidgetState  extends State<TrickListWidget> {
   void _loadAllTricks() async {
     _tricksFuture = fetchTricks();
     _allTricks = await _tricksFuture;
-    _allTricks = {
+    /*_allTricks = {
           for (var trick in _allTricks) trick.trickName: trick
-        }.values.toList();
+        }.values.toList();*/
+    final grouped = <String, List<TrickList>>{};
+
+    for (var trick in _allTricks) {
+      grouped.putIfAbsent(trick.trickName, () => []);
+      grouped[trick.trickName]!.add(trick);
+    }
+
+    _allTricks = grouped.entries.map((entry) {
+      final tricks = entry.value;
+
+      final allMastered = tricks.every((t) => t.isMastered);
+
+      final first = tricks.first;
+
+      return TrickList(
+        id: first.id,
+        trickName: first.trickName,
+        description: first.description,
+        link: first.link,
+        leg: first.leg,
+        isMastered: allMastered, 
+        categoryName: first.categoryName,
+      );
+    }).toList();
+
     _filteredTricks = _allTricks;
     if (mounted) setState(() {});
   }
@@ -102,6 +127,10 @@ class _TrickListWidgetState  extends State<TrickListWidget> {
       });
     });
   }
+
+  void refresh() {
+    _loadAllTricks();
+  }
   
   @override Widget build(BuildContext context) { 
     final lang = context.read<AppLanguage>(); 
@@ -147,11 +176,6 @@ class _TrickListWidgetState  extends State<TrickListWidget> {
             ), 
           ); 
         } 
-        
-        final tricks = snapshot.data!; 
-        final uniqueTricks = {
-          for (var trick in tricks) trick.trickName: trick
-        }.values.toList();
         
         return SafeArea (
           child: LayoutBuilder(
@@ -215,7 +239,10 @@ class _TrickListWidgetState  extends State<TrickListWidget> {
                     
                     ..._filteredTricks.map((trick) { 
                       return GestureDetector( 
-                        onTap: () => widget.onTrickSelected(trick), 
+                        onTap: () async {
+                          await widget.onTrickSelected(trick);
+                          refresh();
+                        },
                         child: Container( 
                           decoration: BoxDecoration(
                             color: AppColors.accent), 

@@ -155,7 +155,6 @@ class _MeetingWidgetState  extends State<MeetingWidget> {
     try {
         if (response.statusCode == 200) {
             final parsed = jsonDecode(response.body);
-            print('API ATTENDEE DATA (JSON): $parsed');
 
             if (!mounted) return;
 
@@ -164,8 +163,6 @@ class _MeetingWidgetState  extends State<MeetingWidget> {
             });
 
         } else {
-            print('Status ${response.statusCode}, Body: ${response.body}');
-            
             if (!mounted) return;
             
             setState(() {
@@ -176,15 +173,11 @@ class _MeetingWidgetState  extends State<MeetingWidget> {
             );
         }
       } catch (e) {
-          print('$e');
           if (!mounted) return;
           setState(() {
               isOwner = false;
           });
       }
-
-      print('Attendee: $isOwner');
-      print('Attendee: ${response.statusCode}');
 
       if (!mounted) return;
   }
@@ -434,77 +427,93 @@ class _MeetingWidgetState  extends State<MeetingWidget> {
                       SizedBox(height: 18),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            '$day.$month.$year',
-                            style: TextStyle(
-                              color: AppColors.text,
-                            ),
-                          ),
-                          Text(
-                            ' | ',
-                            style: TextStyle(
-                              color: AppColors.text,
-                            ),
-                          ),
-                          Text(
-                            '$hour:$minute',
-                            style: TextStyle(
-                              color: AppColors.text,
-                            ),
-                          ),
-                          Text(
-                            ' | ',
-                            style: TextStyle(
-                              color: AppColors.text,
-                            ),
-                          ),
-                           Text(
-                              '${location!.city.isNotEmpty ? '${lang.t(location!.city)}, ' : ''}${lang.t(location!.country)}',
-                              
-                              style: TextStyle(
-                                color: AppColors.text,
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                          Expanded(
+                            child: Text( 
+                              '$day.$month.$year',
                               maxLines: 1,
-                          )
-                          
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis, 
+                              style: const TextStyle(color: AppColors.text),
+                            )
+                          ),
+                          Text(
+                            ' | ',
+                            style: TextStyle(
+                              color: AppColors.text,
+                            ),
+                          ),
+                          Expanded(
+                            child: Text( 
+                              '$hour:$minute',
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis, 
+                              style: const TextStyle(color: AppColors.text),
+                            )
+                          ),
+                          Text(
+                            ' | ',
+                            style: TextStyle(
+                              color: AppColors.text,
+                            ),
+                          ),
+                          Expanded(
+                            child: Text( 
+                              '${location!.city.isNotEmpty ? '${lang.t(location!.city)}, ' : ''}${lang.t(location!.country)}',
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis, 
+                              style: const TextStyle(color: AppColors.text),
+                            )
+                          ),
                         ],
                       ),
                       
                       SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            '${lang.t('age')}: ${widget.selectedMeeting.age}',
-                            style: TextStyle(
-                              color: AppColors.text,
-                            ),
-                          ),
-                          Text(
-                            ' | ',
-                            style: TextStyle(
-                              color: AppColors.text,
-                            ),
-                          ),
-                          Text(
-                            lang.t(widget.selectedMeeting.type),
-                            style: TextStyle(
-                              color: AppColors.text,
-                            ),
-                          ),
+                          Expanded(
+                            child: Text( 
+                              '${lang.t('age')}: ${widget.selectedMeeting.age}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis, 
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(color: AppColors.text),
+                            )
+                          ), 
                           Text(
                             ' | ',
                             style: TextStyle(
                               color: AppColors.text,
                             ),
                           ),
+                          Expanded(
+                            child: Text( 
+                              lang.t(widget.selectedMeeting.type),
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis, 
+                              style: const TextStyle(color: AppColors.text),
+                            )
+                          ), 
                           Text(
-                            lang.t(widget.selectedMeeting.level),
+                            ' | ',
                             style: TextStyle(
                               color: AppColors.text,
                             ),
+                          ),
+                          Expanded(
+                            child: Text( 
+                              lang.t(widget.selectedMeeting.level),
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis, 
+                              style: const TextStyle(color: AppColors.text),
+                            )
                           ),
                         ]
                       ),

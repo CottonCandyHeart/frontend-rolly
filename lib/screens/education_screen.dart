@@ -22,6 +22,7 @@ class EducationScreen extends StatefulWidget {
 class _EducationState extends State<EducationScreen> {
   String? selectedCategory;
   TrickList? selectedTrick;
+  int trickListRefreshKey = 0;
 
   Future<List<Category>> fetchCategories(BuildContext context) async {
     final lang = context.read<AppLanguage>();
@@ -83,6 +84,7 @@ class _EducationState extends State<EducationScreen> {
     // trick wybrany
     if(selectedTrick == null){
       return TrickListWidget(
+        key: ValueKey(trickListRefreshKey),
         category: selectedCategory!,
         onBack: () => setState(() => selectedCategory = null),
         onTrickSelected: (trick) {
@@ -97,7 +99,12 @@ class _EducationState extends State<EducationScreen> {
     return TrickWidget(
       trick: selectedTrick!,
       trickList: getAllTricks(selectedTrick!.trickName),
-      onBack: () => setState(() => selectedTrick = null),
+      onBack: () {
+        setState(() {
+          selectedTrick = null;
+          trickListRefreshKey++;
+        });
+      },
       onTrickUpdated: (updatedTrick) {
         setState(() {
           selectedTrick = updatedTrick;

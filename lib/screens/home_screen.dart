@@ -280,10 +280,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 child: Row(
                                   children: [
-                                    Text(
-                                      lang.t('noMeetings'),
-                                      style: const TextStyle(color: AppColors.text),
-                                    ),
+                                    Expanded(
+                                      child: Text( 
+                                        lang.t('noMeetings'),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis, 
+                                        style: const TextStyle(color: AppColors.text),
+                                      )
+                                    ), 
                                   ],
                                 ),),],
                             ),
@@ -325,10 +329,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 child: Row(
                                   children: [
-                                    Text(
-                                      lang.t('noUpcomingTrainings'),
-                                      style: const TextStyle(color: AppColors.text),
-                                    ),
+                                    Expanded(
+                                    child: Text( 
+                                        lang.t('noUpcomingTrainings'),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis, 
+                                        style: const TextStyle(color: AppColors.text),
+                                      )
+                                    ), 
                                   ],
                                 ),),],
                             ),
@@ -435,7 +443,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              c.name,
+                              lang.t(c.name),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.text,

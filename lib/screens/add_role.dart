@@ -155,6 +155,7 @@ class _AddRoleState extends State<AddRole> {
                   TextField(
                     maxLines: null, 
                     minLines: 5,
+                    maxLength: 255,
                     controller: _descriptionController,
                     keyboardType: TextInputType.multiline,
                     decoration: InputDecoration(

@@ -85,6 +85,7 @@ class _AddTrickScreenState extends State<AddTrickScreen> {
       final url = AppConfig.adminAddTrick; 
 
       final trick = TrickList(
+        id: 0,
         categoryName: _selectedCategory!,
         trickName: _nameController.text.trim(),
         link: _linkController.text.trim(),
@@ -203,6 +204,7 @@ class _AddTrickScreenState extends State<AddTrickScreen> {
                   TextField(
                     maxLines: null, 
                     minLines: 5,
+                    maxLength: 2000,
                     controller: _descriptionController,
                     keyboardType: TextInputType.multiline,
                     decoration: InputDecoration(

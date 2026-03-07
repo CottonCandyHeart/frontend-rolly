@@ -235,6 +235,7 @@ class _AddMeetingState extends State<AddMeeting> {
                   TextField(
                     maxLines: null, 
                     minLines: 5,
+                    maxLength: 1000,
                     controller: _descriptionController,
                     keyboardType: TextInputType.multiline,
                     decoration: InputDecoration(

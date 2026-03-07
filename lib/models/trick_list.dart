@@ -1,4 +1,5 @@
 class TrickList {
+  int id;
   String categoryName;
   final String trickName;
   final String link;
@@ -7,6 +8,7 @@ class TrickList {
   bool isMastered;
 
   TrickList({
+    required this.id,
     required this.categoryName, 
     required this.trickName, 
     required this.link, 
@@ -17,6 +19,7 @@ class TrickList {
 
   factory TrickList.fromJson(Map<String, dynamic> json) {
     return TrickList(
+      id: json['id'],
       categoryName: json['categoryName'],
       trickName: json['trickName'],
       link: json['link'],
@@ -28,6 +31,7 @@ class TrickList {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'categoryName': categoryName,
       'trickName': trickName,
       'link': link,

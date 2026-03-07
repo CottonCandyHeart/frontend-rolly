@@ -24,13 +24,13 @@ const Map<String, String> fr = {
   'update': 'Mettre à jour',
   'mastered': 'Maîtrisé',
   'notMastered': 'Maîtriser',
-  'delete': 'Supprimer',
+  'delete': 'Sup',
   'cancel': 'Annuler',
 
   // HOME PAGE
   'totalDistance': 'Distance totale',
-  'totalSessions': 'Nombre total de sessions',
-  'totalTricksLearned': 'Nombre total de figures apprises',
+  'totalSessions': 'Sessions',
+  'totalTricksLearned': 'Figures apprises',
 
   // USER DATA
   'username': 'Nom d\'utilisateur',

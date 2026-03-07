@@ -57,8 +57,16 @@ class _TrickWidgetState extends State<TrickWidget> {
     if (!mounted) return;
     setState(() {
       allTypes = tricks;
+      
+      /*selectedTrick = allTypes.firstWhere(
+        (t) => t.id == selectedTrick.id,
+        orElse: () => allTypes.first,
+      );*/
+      selectedTrick = allTypes.firstWhere(
+        (t) => t.id == widget.trick.id, 
+        orElse: () => allTypes.first,
+      );
     });
-    print(allTypes.length);
   }
 
   Future<void> _setMastered() async {
@@ -71,10 +79,10 @@ class _TrickWidgetState extends State<TrickWidget> {
 
     final url;
 
-    if (!widget.trick.isMastered){
-      url = Uri.parse('${AppConfig.trickEndpoint}/${Uri.encodeComponent(widget.trick.trickName)}'); 
+    if (!selectedTrick.isMastered){
+      url = Uri.parse('${AppConfig.trickEndpoint}/${selectedTrick.id}'); 
     } else {
-      url = Uri.parse('${AppConfig.trickEndpoint}/remove/${Uri.encodeComponent(widget.trick.trickName)}'); 
+      url = Uri.parse('${AppConfig.trickEndpoint}/remove/${selectedTrick.id}'); 
     }
 
 
@@ -89,13 +97,19 @@ class _TrickWidgetState extends State<TrickWidget> {
 
     if (response.statusCode == 200) {
       final message = response.body;
-      widget.trick.isMastered = !widget.trick.isMastered;
+      setState(() {
+        selectedTrick.isMastered = !selectedTrick.isMastered;
+        /*final index = allTypes.indexWhere((t) => t.id == selectedTrick.id);
+        if (index != -1) {
+          allTypes[index].isMastered = selectedTrick.isMastered;
+        }*/
+      });
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(context.read<AppLanguage>().t(message))),
       );
 
-      widget.onTrickUpdated(widget.trick);
+      widget.onTrickUpdated(selectedTrick);
     } else {
       // Obsługa błędów
       if (!mounted) return;
@@ -155,6 +169,7 @@ class _TrickWidgetState extends State<TrickWidget> {
                       onSelected: (_) {
                         setState(() {
                           selectedTrick = trickVariant;
+                          
 
                           final id = YoutubePlayerController
                               .convertUrlToId(trickVariant.link);
