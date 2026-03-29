@@ -1,7 +1,9 @@
 
 import 'package:flutter/material.dart';
+import 'package:frontend_rolly/models/user_response.dart';
 import 'package:frontend_rolly/screens/admin_home_page.dart';
 import 'package:frontend_rolly/screens/main_home_page.dart';
+import 'package:frontend_rolly/screens/trener_home_page.dart';
 import 'package:frontend_rolly/services/notification_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,29 +27,49 @@ class _SplashScreenState extends State<SplashScreen> {
     loadAndScheduleNotifications();
   }
 
-  Future<void> checkAdmin() async {
+  void _goTo(Widget page) {
+    if (!mounted) return;
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => page),
+    );
+}
+
+  Future<void> checkRole() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('jwt_token');
 
-    final url = Uri.parse(AppConfig.chackAdminRole); 
-    final response = await http.get(
-      url,
-      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
-    );
+    if (token == null) {
+      _goTo(const MyHomePage(title: 'Rolly'));
+      return;
+    }
 
-    if (response.statusCode == 200) {
-      if (!mounted) return;
+    try {
+      final response = await http.get(
+        Uri.parse(AppConfig.checkRole),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const AdminHomePage(title: 'Rolly')),
-      );
-    } else {
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MyHomePage(title: 'Rolly')),
-      );
+      if (response.statusCode == 200) {
+        String role = response.body.trim();
+        print("ROLE: $role");
+        
+        if (role == "admin"){
+          _goTo(const AdminHomePage(title: 'Rolly'));
+        } else if (role == "trener"){
+          _goTo(const TrenerHomePage(title: 'Rolly'));
+        } else {
+          _goTo(const MyHomePage(title: 'Rolly'));
+        }
+      } 
+
+    } catch (e) {
+      print("Role check error: $e");
+      _goTo(const MyHomePage(title: 'Rolly'));
     }
   }
 
@@ -60,7 +82,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (token != null && token.isNotEmpty) {
       if (!mounted) return;
 
-      await checkAdmin();
+      await checkRole();
     } else {
       if (!mounted) return;
       Navigator.pushReplacement(

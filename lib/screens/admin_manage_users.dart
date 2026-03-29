@@ -75,7 +75,6 @@ class _AdminManageUsersState extends State<AdminManageUsers> {
       if (!mounted) return;
 
       final List jsonList = jsonDecode(response.body);
-      print(jsonList.length);
       final users = jsonList.map((e) => UserResponse.fromJson(e)).toList();
 
       setState(() {

@@ -20,6 +20,8 @@ class AppConfig {
 
   static const String adminEndpoint = '$apiBaseUrl/admin';
   static const String chackAdminRole = '$adminEndpoint/isAdmin';
+  static const String checkTrenerRole = '$adminEndpoint/isTrener';
+  static const String checkRole = '$adminEndpoint/checkRole';
   static const String getAllUsers = '$adminEndpoint/all';
   static const String adminAaddlUser = '$adminEndpoint/add';
   static const String changeRole = '$adminEndpoint/role';

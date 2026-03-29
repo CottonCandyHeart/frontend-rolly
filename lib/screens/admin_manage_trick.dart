@@ -99,7 +99,6 @@ class _AdminManageTricksState extends State<AdminManageTricks> {
       if (!mounted) return;
 
       final List jsonList = jsonDecode(response.body);
-      print(jsonList.length);
       final trick = jsonList.map((e) => TrickList.fromJson(e)).toList();
 
       setState(() {

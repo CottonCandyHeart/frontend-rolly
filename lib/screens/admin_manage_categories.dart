@@ -47,7 +47,6 @@ class _AdminManageCategoriesState extends State<AdminManageCategories> {
       if (!mounted) return;
 
       final List jsonList = jsonDecode(response.body);
-      print(jsonList.length);
       final category = jsonList.map((e) => Category.fromJson(e)).toList();
 
       setState(() {

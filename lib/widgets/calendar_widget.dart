@@ -23,6 +23,7 @@ class CustomCalendar extends StatefulWidget {
   final DateTime chosen;
   final VoidCallback onPrev;
   final VoidCallback onNext;
+  final void Function() onToday;
   final Future<void> Function()? onRefresh;
 
   const CustomCalendar({
@@ -32,6 +33,7 @@ class CustomCalendar extends StatefulWidget {
     required this.chosen,
     required this.onPrev,
     required this.onNext,
+    required this.onToday,
     required this.onRefresh,
   });
 
@@ -264,15 +266,21 @@ class _CustomCalendarState extends State<CustomCalendar>{
                         ),
                       ),
                       Spacer(),
-
-                      Text(
-                        "${lang.t(months[chosen.month-1])} ${chosen.year}",
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.background,
+                      
+                      GestureDetector(
+                        onTap: () {
+                          widget.onToday();
+                        },
+                        child: Text(
+                          "${lang.t(months[chosen.month-1])} ${chosen.year}",
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.background,
+                          ),
                         ),
                       ),
+                      
                       Spacer(),
 
                       Align(

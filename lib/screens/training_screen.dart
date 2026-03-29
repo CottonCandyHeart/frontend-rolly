@@ -32,6 +32,12 @@ class _TrainingState extends State<TrainingScreen> {
     });
   }
 
+  void goToday() {
+    setState(() {
+      chosen = DateTime.now();
+    });
+  }
+
   Future<List<TrainingPlan>> getTrainingPlans() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('jwt_token');
@@ -120,6 +126,7 @@ class _TrainingState extends State<TrainingScreen> {
             chosen: chosen,
             onPrev: goPrevMonth,
             onNext: goNextMonth,
+            onToday: goToday,
             onRefresh: () async {
               setState(() {});
             },

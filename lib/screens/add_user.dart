@@ -372,7 +372,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                    value: selectedRole,
+                    value: _roles.contains(selectedRole) ? selectedRole : null,
                     decoration: InputDecoration(
                       labelText: lang.t('role'),
                       filled: true,
