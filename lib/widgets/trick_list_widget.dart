@@ -35,10 +35,8 @@ class _TrickListWidgetState  extends State<TrickListWidget> {
 
   void _loadAllTricks() async {
     _tricksFuture = fetchTricks();
+
     _allTricks = await _tricksFuture;
-    /*_allTricks = {
-          for (var trick in _allTricks) trick.trickName: trick
-        }.values.toList();*/
     final grouped = <String, List<TrickList>>{};
 
     for (var trick in _allTricks) {
@@ -73,7 +71,9 @@ class _TrickListWidgetState  extends State<TrickListWidget> {
     final token = prefs.getString('jwt_token')!; 
     final url = "${AppConfig.trickByCategoryEndpoint}/${widget.category}"; 
     final response = await http.get( Uri.parse(url), headers: {'Authorization': 'Bearer $token'}, ); 
-    final List data = jsonDecode(response.body); return data.map((e) => TrickList.fromJson(e)).toList(); 
+    final List data = jsonDecode(response.body); 
+    
+    return data.map((e) => TrickList.fromJson(e)).toList(); 
   } 
 
   Future<void> _resetProgress(BuildContext context) async {
@@ -101,6 +101,7 @@ class _TrickListWidgetState  extends State<TrickListWidget> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(context.read<AppLanguage>().t(message))),
       );
+      refresh();
 
       setState(() {
         _tricksFuture = fetchTricks();
@@ -129,6 +130,9 @@ class _TrickListWidgetState  extends State<TrickListWidget> {
   }
 
   void refresh() {
+    setState(() {
+      _tricksFuture = fetchTricks();
+    });
     _loadAllTricks();
   }
   
@@ -205,7 +209,29 @@ class _TrickListWidgetState  extends State<TrickListWidget> {
                           child: Padding( 
                             padding: EdgeInsetsGeometry.fromLTRB(0, 0, 20, 0), 
                             child: GestureDetector(
-                              onTap: () => _resetProgress(context),
+                              onTap: () async {
+                                final confirmed = await showDialog<bool>(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text(context.read<AppLanguage>().t('confirmResetTitle')),
+                                    content: Text(context.read<AppLanguage>().t('confirmResetMessage')),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.of(context).pop(false),
+                                        child: Text(context.read<AppLanguage>().t('cancel')),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.of(context).pop(true),
+                                        child: Text(context.read<AppLanguage>().t('yes')),
+                                      ),
+                                    ],
+                                  ),
+                                );
+
+                                if (confirmed == true) {
+                                  await _resetProgress(context);
+                                }
+                              },
                               child: Text(
                                 lang.t('resetProgress'),
                                 style: TextStyle(

@@ -40,10 +40,11 @@ class _SplashScreenState extends State<SplashScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('jwt_token');
 
+/*
     if (token == null) {
       _goTo(const MyHomePage(title: 'Rolly'));
       return;
-    }
+    }*/
 
     try {
       final response = await http.get(
@@ -77,7 +78,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('jwt_token');
 
-    await Future.delayed(const Duration(seconds: 1));
+    //await Future.delayed(const Duration(seconds: 1));
 
     if (token != null && token.isNotEmpty) {
       if (!mounted) return;

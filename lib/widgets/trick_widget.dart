@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:frontend_rolly/config.dart';
 import 'package:frontend_rolly/lang/app_language.dart';
@@ -51,21 +53,38 @@ class _TrickWidgetState extends State<TrickWidget> {
     loadTricks();
   }
 
+  Future<List<TrickList>> fetchTricks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token')!;
+
+    final url = "${AppConfig.trickByCategoryEndpoint}/${widget.trick.categoryName}";
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    final List data = jsonDecode(response.body);
+    return data.map((e) => TrickList.fromJson(e)).toList();
+  }
+
 
   Future<void> loadTricks() async {
-    final tricks = await widget.trickList;
+   // final tricks = await widget.trickList;
+   final tricks = await fetchTricks();
+
     if (!mounted) return;
     setState(() {
-      allTypes = tricks;
+      allTypes = tricks
+        .where((t) => t.trickName == widget.trick.trickName)
+        .toList();
       
-      /*selectedTrick = allTypes.firstWhere(
-        (t) => t.id == selectedTrick.id,
-        orElse: () => allTypes.first,
-      );*/
-      selectedTrick = allTypes.firstWhere(
-        (t) => t.id == widget.trick.id, 
-        orElse: () => allTypes.first,
+      final updated = allTypes.firstWhere(
+        (t) => t.id == widget.trick.id,
+        orElse: () => selectedTrick,
       );
+
+      selectedTrick = updated;
     });
   }
 
@@ -99,10 +118,11 @@ class _TrickWidgetState extends State<TrickWidget> {
       final message = response.body;
       setState(() {
         selectedTrick.isMastered = !selectedTrick.isMastered;
-        /*final index = allTypes.indexWhere((t) => t.id == selectedTrick.id);
+
+        int index = allTypes.indexWhere((t) => t.id == selectedTrick.id);
         if (index != -1) {
           allTypes[index].isMastered = selectedTrick.isMastered;
-        }*/
+        }
       });
 
       ScaffoldMessenger.of(context).showSnackBar(

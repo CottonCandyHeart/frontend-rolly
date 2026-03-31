@@ -14,7 +14,7 @@ class TrickList {
     required this.link, 
     required this.leg,
     required this.description,
-    required this.isMastered    
+    required this.isMastered,   
   });
 
   factory TrickList.fromJson(Map<String, dynamic> json) {

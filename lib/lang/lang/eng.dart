@@ -73,6 +73,9 @@ const Map<String, String> eng = {
   'society': 'Society',
   'trainingReminder': 'Training Reminder',
   'updates': 'Updates',
+  'confirmResetTitle': 'Reset progress',
+  'confirmResetMessage': 'Do you want to reset your progress of all categories',
+  'yes': 'Yes',
 
   // LANGUAGE
   'language_pl': 'Polish',

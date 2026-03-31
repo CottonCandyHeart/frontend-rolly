@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend_rolly/screens/admin_home_page.dart';
 import 'package:frontend_rolly/screens/main_home_page.dart';
+import 'package:frontend_rolly/screens/trener_home_page.dart';
 import 'package:frontend_rolly/theme/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,11 +51,17 @@ class _LoginScreenState extends State<LoginScreen> {
         await prefs.setString('jwt_token', token);
 
         // Przejdź na ekran główny
+        
         if (mounted) {
           if(_usernameController.text == "admin"){
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const AdminHomePage(title: AppConfig.appName)),
+            );
+          } else if (_usernameController.text == "trener") {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const TrenerHomePage(title: AppConfig.appName)),
             );
           } else {
             Navigator.pushReplacement(

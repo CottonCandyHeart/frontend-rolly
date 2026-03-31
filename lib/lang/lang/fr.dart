@@ -73,6 +73,9 @@ const Map<String, String> fr = {
   'society': 'Association',
   'trainingReminder': 'Rappel de formation',
   'updates': 'Mises à jour',
+  'confirmResetTitle': 'Réinitialiser la progression',
+  'confirmResetMessage': 'Souhaitez-vous supprimer votre progression dans toutes les catégories',
+  'yes': 'Oui',
 
   // LANGUAGE
   'language_pl': 'Polonais',
@@ -182,6 +185,7 @@ const Map<String, String> fr = {
   'planTrainingMessage': 'Votre formation commence dans 1 heure',
   'joinedEventTitle': 'Rappel de réunion',
   'joinedEventMessage': 'Votre réunion commence dans 1 heure',
+
 
 
   // MEETINGS
